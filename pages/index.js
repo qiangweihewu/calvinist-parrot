@@ -56,10 +56,8 @@ export default function Home() {
           />
           <input type="submit" value="Ask" />
           {isLoading && <span>Loading...</span>}
-        </form>
-        <div className={styles.resultContainer}>
-          <div className={styles.result}>{result}</div>
-        </div>
+          </form>
+        <div className={styles.result}>{result}</div>
       </main>
     </div>
   );
