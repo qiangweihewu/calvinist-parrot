@@ -1,15 +1,15 @@
 const { Configuration, OpenAIApi } = require("openai");
-const axios = require('axios');
+const axios = require("axios");
 
-const apiKey = process.env.OPENAI_API_KEY
-console.log(apiKey)
+const apiKey = process.env.OPENAI_API_KEY;
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
-  console.log(apiKey)
+  const question = req.body.question || "";
+  const conversationHistory = req.body.conversationHistory || [];
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
@@ -19,7 +19,6 @@ export default async function (req, res) {
     return;
   }
 
-  const question = req.body.question || '';
   if (question.trim().length === 0) {
     res.status(400).json({
       error: {
@@ -31,25 +30,24 @@ export default async function (req, res) {
 
   try {
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      "https://api.openai.com/v1/chat/completions",
       {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church."},
-          {role: "user", content: question}
-        ],
+        model: "gpt-3.5-turbo",
+        messages: [...conversationHistory, { role: "user", content: question }],
       },
       {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
         },
-      },
+      }
     );
-    const result = response.data.choices[0].message;
-    console.log(result);
-    res.status(200).json({ result });
-  } catch(error) {
+    const assistant = response.data.choices[0].message;
+    const newConversationHistory = [...conversationHistory, { role: "user", content: question }, assistant];
+    res.status(200).json({ newConversationHistory });
+    console.log("newConversationHistory", newConversationHistory);
+  } catch (error) {
+
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
