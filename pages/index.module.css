@@ -25,6 +25,7 @@
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
+  width: 100%; /* Add this line to ensure the flex container spans the entire width */
 }
 .main .icon {
   width: 34px;
@@ -64,4 +65,17 @@
 .main .result {
   font-weight: bold;
   margin-top: 40px;
+}
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%; /* 50% of the screen for desktop */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .result-container {
+    width: 90%; /* 90% of the screen for mobile */
+  }
 }
