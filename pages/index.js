@@ -58,7 +58,7 @@ export default function Home() {
         </div>
         <div className={styles.scrollableContent}>
             {conversationStarted &&
-              conversationHistory.map((message, index) => (
+              conversationHistory.slice(1).map((message, index) => (
                 <p key={index}>
                   <strong>{message.role === "user" ? "Your question" : "Calvinist Parrot"}:</strong> {message.content}
                 </p>
