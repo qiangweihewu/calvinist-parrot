@@ -2,13 +2,14 @@ const { Configuration, OpenAIApi } = require("openai");
 const axios = require('axios');
 
 const apiKey = process.env.OPENAI_API_KEY
-
+console.log(apiKey)
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
+  console.log(apiKey)
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
