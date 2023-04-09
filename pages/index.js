@@ -65,6 +65,7 @@ export default function Home() {
               ))}
         </div>
         <div className={styles.formContainer}>
+          {isLoading && <span>Loading...</span>}
           <form onSubmit={onSubmit}>
             <input
               type="text"
@@ -74,7 +75,6 @@ export default function Home() {
               onChange={(e) => setQuestionInput(e.target.value)}
             />
             <input type="submit" value="Ask" />
-            {isLoading && <span>Loading...</span>}
           </form>
         </div>
       </main>
