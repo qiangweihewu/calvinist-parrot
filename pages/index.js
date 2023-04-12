@@ -142,7 +142,7 @@ export default function Home() {
                       ? "Your question"
                       : message.role === "assistant"
                         ? "Calvinist Parrot"
-                        : "Reflexion question"}
+                        : "Reflection question"}
                     :</strong>{" "}
                   {message.content}
                 </p>
