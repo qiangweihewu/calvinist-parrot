@@ -9,7 +9,7 @@ const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
     const question = req.body.question || "";
-    const conversationHistory_user = req.body.conversationHistory_user || [];
+    const conversationHistory_user = req.body.newConversationHistory_user_2 || [];
 
     if (!configuration.apiKey) {
         res.status(500).json({
@@ -34,11 +34,8 @@ export default async function (req, res) {
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
-                messages: [
-                    { role: "system", content: "You are a search engine expert specializing in creating queries to search a collection of books indexed using an inverted index. And you only reply with one search query." },
-                    { role: "user", content: "Create a query for the following question: " + question }
-                ],
-            },
+                messages: [...conversationHistory_user],
+      },
             {
                 headers: {
                     "Content-Type": "application/json",

@@ -152,5 +152,6 @@
 .adversaryBubble {
   /* background-color: lightyellow; */
   text-align: left;
+  align-self: center;
   max-width: 70%;
 }

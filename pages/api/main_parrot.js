@@ -9,7 +9,7 @@ const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
   const question = req.body.question || "";
-  const conversationHistory_parrot = req.body.conversationHistory_parrot || [];
+  const conversationHistory_parrot = req.body.conversationHistory_parrot || req.body.newConversationHistory_parrot_1;
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {

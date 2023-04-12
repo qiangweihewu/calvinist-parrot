@@ -11,7 +11,7 @@ export default function Home() {
     role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church."
   }]);
   const [conversationHistory_user, setConversationHistory_user] = useState([{
-    role: "system", content: "You are a search engine expert specializing in creating queries to search a collection of books indexed using an inverted index. And you only reply with one search query."
+    role: "system", content: "You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. Your job here is to ask the assistant questions to reflect upon his answers to the user to ensure his answers are biblically accurate."
   }]);
 
   async function onSubmit(event) {
@@ -22,36 +22,63 @@ export default function Home() {
 
       // Update conversationHistory with the questionInput
       const newConversationHistory_user_1 = [...conversationHistory_user, { role: "user", content: questionInput }];
+      setConversationHistory_user(newConversationHistory_user_1);
 
-      // Start with CCEL query --> This will later be the section I want to replace with my DNN
-      const response_query = await fetch("/api/ccel_query", {
+      // Main parrot 1
+      const response_parrot_1 = await fetch("/api/main_parrot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: questionInput, conversationHistory_user }),
+        body: JSON.stringify({ question: questionInput, conversationHistory_parrot }),
       });
 
-      // Get the result from the CCEL query
+      const parrot_1 = await response_parrot_1.json();
+
+      if (response_parrot_1.status !== 200) {
+        throw parrot.error || new Error(`Request failed with status ${response_parrot_1.status}`);
+      }
+
+      // Update conversationHistory with the result from the main parrot
+      const newConversationHistory_parrot_1 = [
+        ...conversationHistory_parrot,
+        { role: "user", content: questionInput },
+        { role: "assistant", content: parrot_1.assistant.content },
+      ]
+
+      const newConversationHistory_user_2 = [...newConversationHistory_user_1, { role: "assistant", content: parrot_1.assistant.content }];
+      setConversationHistory_user(newConversationHistory_user_2);
+
+      // Start with Calvin query --> This will later be the section I want to replace with my DNN
+      const response_query = await fetch("/api/calvin_query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: questionInput, newConversationHistory_user_2 }),
+      });
+
+      // Get the result from the Calvin query
       const adversary = await response_query.json();
 
       if (response_query.status !== 200) {
         throw adversary.error || new Error(`Request failed with status ${response_query.status}`);
       }
 
-      // Update conversationHistory with the result from the CCEL query
-      const newConversationHistory_user_2 = [...newConversationHistory_user_1, { role: "adversary", content: adversary.assistant.content },];
+      // Update conversationHistory with the result from the Calvin query
+      const newConversationHistory_user_3 = [...newConversationHistory_user_2, { role: "reflexion", content: adversary.assistant.content },];
+      setConversationHistory_user(newConversationHistory_user_3);
 
-      // concat the result from the CCEL query with questionInput to get the new questionInput
-      const new_questionInput = questionInput + "\nPlease consider the following books: \n" + adversary.assistant.content;
+      // concat the result from the Calvin query with questionInput to get the new questionInput
+      // const new_questionInput = questionInput + "\nPlease consider the following books: \n" + adversary.assistant.content;
 
-      // Main parrot
+      // Main parrot 2
       const response_parrot = await fetch("/api/main_parrot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: questionInput, conversationHistory_parrot }),
+        body: JSON.stringify({ question: adversary.assistant.content, newConversationHistory_parrot_1 }),
       });
 
       const parrot = await response_parrot.json();
@@ -61,21 +88,21 @@ export default function Home() {
       }
 
       // Update conversationHistory with the result from the main parrot
-      const newConversationHistory_parrot = [
-        ...conversationHistory_parrot,
-        { role: "user", content: questionInput },
+      const newConversationHistory_parrot_2 = [
+        ...newConversationHistory_parrot_1,
+        { role: "user", content: adversary.assistant.content },
         { role: "assistant", content: parrot.assistant.content },
-      ];
+      ]
 
-      const newConversationHistory_user_3 = [...newConversationHistory_user_2, { role: "assistant", content: parrot.assistant.content }];
-      
+      const newConversationHistory_user_4 = [...newConversationHistory_user_3, { role: "assistant", content: parrot.assistant.content }];
+
       // Update the state
       setQuestionInput("");
-      setConversationHistory_parrot(newConversationHistory_parrot);
-      console.log("newConversationHistory_parrot: ", newConversationHistory_parrot);
-      
-      setConversationHistory_user(newConversationHistory_user_3);
-      console.log("newConversationHistory_user_3: ", newConversationHistory_user_3);
+      setConversationHistory_parrot(newConversationHistory_parrot_2);
+      console.log("newConversationHistory_parrot_2: ", newConversationHistory_parrot_2);
+
+      setConversationHistory_user(newConversationHistory_user_4);
+      console.log("newConversationHistory_user_4: ", newConversationHistory_user_4);
     } catch (error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -115,7 +142,7 @@ export default function Home() {
                       ? "Your question"
                       : message.role === "assistant"
                         ? "Calvinist Parrot"
-                        : "Adversarial question"}
+                        : "Reflexion question"}
                     :</strong>{" "}
                   {message.content}
                 </p>
