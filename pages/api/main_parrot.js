@@ -9,7 +9,7 @@ const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
   const question = req.body.question || "";
-  const conversationHistory = req.body.conversationHistory || [];
+  const conversationHistory_parrot = req.body.conversationHistory_parrot || [];
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
@@ -33,7 +33,7 @@ export default async function (req, res) {
       "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-3.5-turbo",
-        messages: [...conversationHistory, { role: "user", content: question }],
+        messages: [...conversationHistory_parrot, { role: "user", content: question }],
       },
       {
         headers: {
@@ -43,9 +43,8 @@ export default async function (req, res) {
       }
     );
     const assistant = response.data.choices[0].message;
-    const newConversationHistory = [...conversationHistory, { role: "user", content: question }, assistant];
-    res.status(200).json({ newConversationHistory });
-    console.log("newConversationHistory", newConversationHistory);
+    res.status(200).json({ assistant });
+
   } catch (error) {
 
     // Consider adjusting the error handling logic for your use case

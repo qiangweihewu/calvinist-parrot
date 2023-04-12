@@ -36,10 +36,13 @@
 
 .main h3 {
   font-size: 32px;
+
   @media screen and (max-width: 768px) {
     font-size: 24px;
     background-color: #fff;
-  };
+  }
+
+  ;
   line-height: 40px;
   font-weight: bold;
   color: #202123;
@@ -92,24 +95,62 @@
   background-color: #fff;
   width: 90%;
   height: 220px;
+
   @media screen and (max-width: 768px) {
     height: 150px;
-  };
+  }
+
+  ;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .scrollableContent {
-  margin-top: 220px; /* Adjust this value according to the height of the fixed content */
+  margin-top: 220px;
   width: 90%;
+
   @media screen and (max-width: 768px) {
     width: 100%;
-    margin-top: 180px;
-  };
+    margin-top: 200px;
+  }
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: justify;
-  padding-bottom: 150px; /* Adjust this value according to the height of the .formContainer */
+  align-items: flex-start; /* Align the text bubbles to the left */
+  padding-bottom: 150px;
+}
+
+.textBubble {
+  /* border-radius: 20px;
+  border-width: 1px; */
+  /* border-style: solid;
+  border-color: #202123; */
+  padding: 5px;
+  margin: 5px 0;
+  max-width: 90%;
+}
+
+.textBubble p {
+  margin: 0;
+  padding: 0;
+}
+
+
+.userBubble {
+  /* background-color: #fff; */
+  text-align: right;
+  align-self: flex-end; /* Align the user text bubbles to the right */
+  max-width: 70%;
+}
+
+.calvinistParrotBubble {
+  /* background-color: lightcyan; */
+  text-align: left;
+}
+
+.adversaryBubble {
+  /* background-color: lightyellow; */
+  text-align: left;
+  max-width: 70%;
 }
