@@ -8,21 +8,11 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
-  const question = req.body.question || "";
-  const conversationHistory_parrot = req.body.conversationHistory_parrot || req.body.newConversationHistory_parrot_1;
+  const conversationHistory_parrot = req.body.conversationHistory_temp_parrot || [];
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
         message: "OpenAI API key not configured, please follow instructions in README.md",
-      }
-    });
-    return;
-  }
-
-  if (question.trim().length === 0) {
-    res.status(400).json({
-      error: {
-        message: "Please enter a valid question",
       }
     });
     return;
@@ -33,7 +23,7 @@ export default async function (req, res) {
       "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-3.5-turbo",
-        messages: [...conversationHistory_parrot, { role: "user", content: question }],
+        messages: [...conversationHistory_parrot],
       },
       {
         headers: {

@@ -1,93 +1,14 @@
-@font-face {
-  font-family: "ColfaxAI";
-  src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2) format("woff2"),
-    url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff) format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "ColfaxAI";
-  src: url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff2) format("woff2"),
-    url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff) format("woff");
-  font-weight: bold;
-  font-style: normal;
-}
-
-.main,
-.main input {
-  font-size: 16px;
-  line-height: 24px;
-  color: #353740;
-  font-family: "ColfaxAI", Helvetica, sans-serif;
-}
-
 .main {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 32px);
-  padding: 0 32px;
-  align-items: center;
-}
-
-.main .icon {
-  width: 80px;
-}
-
-.main h3 {
-  font-size: 32px;
-
-  @media screen and (max-width: 768px) {
-    font-size: 24px;
-    background-color: #fff;
-  }
-
-  ;
-  line-height: 40px;
-  font-weight: bold;
-  color: #202123;
-  text-align: center;
-}
-
-.main form {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-}
-
-.main input[type="text"] {
+  height: 100vh;
   padding: 5px 5px;
-  border: 1px solid #2ea6c3;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  outline-color: #2ea6c3;
-}
-
-.main ::placeholder {
-  color: #8e8ea0;
-  opacity: 1;
-}
-
-.main input[type="submit"] {
-  padding: 5px 0;
-  color: #fff;
-  background-color: #2ea6c3;
-  border: none;
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.formContainer {
-  position: fixed;
-  bottom: 0;
-  background-color: #fff;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  padding-bottom: 30px;
+  font-size: 16px;
+  line-height: 21px;
 }
+
+/* Header */
 
 .fixedContent {
   position: fixed;
@@ -106,57 +27,131 @@
   align-items: center;
 }
 
-.scrollableContent {
-  margin-top: 220px;
-  width: 90%;
+
+.fixedContentCollapsed {
+  height: 60px;
+}
+
+.icon {
+  width: 80px;
+}
+
+.iconCollapsed {
+  width: 50px;
+}
+
+.main h3 {
+  font-size: 32px;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
-    margin-top: 200px;
+    font-size: 24px;
+    background-color: #fff;
   }
 
+  ;
+  line-height: 40px;
+  font-weight: bold;
+  color: #202123;
+  text-align: center;
+}
+
+.h3Hidden {
+  display: none;
+}
+
+/* Main body */
+
+.scrollableContent {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align the text bubbles to the left */
-  padding-bottom: 150px;
+  width: 95%;
+  flex-direction: column;
+  margin-top: 70px;
+  /* Match the height of .fixedContent */
+  padding-bottom: 100px;
+  /* Match the height of .formContainer */
 }
 
 .textBubble {
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   border-width: 1px;
-  /* border-style: solid;
-  border-color: #202123; */
   padding: 5px;
-  margin: 5px 0;
-  max-width: 90%;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .textBubble p {
   margin: 0;
-  padding: 2px 0;
+  padding: 2px;
 }
-
 
 .userBubble {
-  /* background-color: #fff; */
+  align-self: flex-end;
+  background-color: #f1f1f1;
+  max-width: 50%;
   text-align: right;
-  align-self: flex-end; /* Align the user text bubbles to the right */
-  max-width: 70%;
 }
 
-.calvinistParrotBubble {
+.parrotBubble {
   background-color: #2ea6c3;
   text-align: left;
+  align-self: flex-start;
+  max-width: 80%;
   color: #fff;
 }
 
-.adversaryBubble {
-  /* background-color: lightyellow; */
-  text-align: left;
-  align-self: center;
-  max-width: 70%;
+.calvinBubble {
+  text-align: right;
+  align-self: flex-end;
+  max-width: 80%;
   border-radius: 10px;
   border-width: 1px;
   border-style: solid;
   border-color: #202123;
+}
+
+/* Bottom section */
+
+.formContainer {
+  position: fixed;
+  bottom: 0;
+  background-color: #fff;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.main form {
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+}
+
+.main input[type="text"] {
+  padding: 5px 5px;
+  line-height: 25px;
+  text-indent: 5px;
+  border: 1px solid #2ea6c3;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  outline-color: #2ea6c3;
+  cursor: pointer;
+}
+
+.main input[type="submit"] {
+  padding: 5px 5px;
+  height: 40px;
+  font-size: 20px;
+  width: 75%;
+  color: #fff;
+  background-color: #2ea6c3;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  align-self: center;
 }

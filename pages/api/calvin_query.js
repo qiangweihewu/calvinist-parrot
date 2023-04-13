@@ -8,22 +8,12 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
-    const question = req.body.question || "";
-    const conversationHistory_user = req.body.newConversationHistory_user_2 || [];
+    const conversationHistory_user = req.body.calvin_context || [];
 
     if (!configuration.apiKey) {
         res.status(500).json({
             error: {
                 message: "OpenAI API key not configured, please follow instructions in README.md",
-            }
-        });
-        return;
-    }
-
-    if (question.trim().length === 0) {
-        res.status(400).json({
-            error: {
-                message: "Please enter a valid question",
             }
         });
         return;
