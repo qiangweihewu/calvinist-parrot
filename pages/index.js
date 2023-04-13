@@ -4,7 +4,6 @@ import styles from "./index.module.css";
 
 export default function Home() {
   const [questionInput, setQuestionInput] = useState("");
-  const [result, setResult] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [conversationStarted, setConversationStarted] = useState(false);
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([{
