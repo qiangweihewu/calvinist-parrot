@@ -4,7 +4,6 @@ import styles from "./index.module.css";
 
 export default function Home() {
   const [questionInput, setQuestionInput] = useState("");
-  const [result, setResult] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [conversationStarted, setConversationStarted] = useState(false);
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([{
@@ -32,13 +31,13 @@ export default function Home() {
       }
 
       setConversationStarted(true);
+
       // declare a variable to store the temporary conversation history
       let conversationHistory_temp_parrot = [...conversationHistory_parrot, { role: "user", content: questionInput }];
-      setConversationHistory_parrot(conversationHistory_temp_parrot);
-      let conversationHistory_temp_calvin = [...conversationHistory_calvin, { role: "user", content: questionInput }];
-      setConversationHistory_calvin(conversationHistory_temp_calvin);
-      let conversationHistory_temp = [...conversationHistory_user, { role: "user", content: questionInput }];
-      setConversationHistory_user(conversationHistory_temp);
+
+      setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: questionInput }]);
+      setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: questionInput }]);
+      setConversationHistory_user(prevState => [...prevState, { role: "user", content: questionInput }]);
 
       // ------------------------------------------------------------
 
@@ -60,12 +59,9 @@ export default function Home() {
       }
 
       // Update conversationHistory with the questionInput
-      conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "assistant", content: parrot_1.assistant.content }];
-      setConversationHistory_parrot(conversationHistory_temp_parrot);
-      conversationHistory_temp_calvin = [...conversationHistory_temp_calvin, { role: "assistant", content: parrot_1.assistant.content }];
-      setConversationHistory_calvin(conversationHistory_temp_calvin);
-      conversationHistory_temp = [...conversationHistory_temp, { role: "assistant", content: parrot_1.assistant.content }];
-      setConversationHistory_user(conversationHistory_temp);
+      setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
+      setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
+      setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
 
       // ------------------------------------------------------------
 
@@ -94,11 +90,10 @@ export default function Home() {
 
       // Update conversationHistory with the result from the Calvin query
       conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "user", content: calvin_response.assistant.content }];
-      setConversationHistory_parrot(conversationHistory_temp_parrot);
-      conversationHistory_temp_calvin = [...conversationHistory_temp_calvin, { role: "user", content: calvin_response.assistant.content }];
-      setConversationHistory_calvin(conversationHistory_temp_calvin);
-      conversationHistory_temp = [...conversationHistory_temp, { role: "calvin", content: calvin_response.assistant.content }];
-      setConversationHistory_user(conversationHistory_temp);
+
+      setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
+      setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
+      setConversationHistory_user(prevState => [...prevState, { role: "calvin", content: calvin_response.assistant.content }]);
 
       // ------------------------------------------------------------
 
@@ -121,15 +116,14 @@ export default function Home() {
 
       // update the conversation history for the user
       conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "assistant", content: parrot_2.assistant.content }];
-      setConversationHistory_parrot(conversationHistory_temp_parrot);
-      conversationHistory_temp_calvin = [...conversationHistory_temp_calvin, { role: "assistant", content: parrot_2.assistant.content }];
-      setConversationHistory_calvin(conversationHistory_temp_calvin);
-      conversationHistory_temp = [...conversationHistory_temp, { role: "assistant", content: parrot_2.assistant.content }];
-      setConversationHistory_user(conversationHistory_temp);
+      
+      setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
+      setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
+      setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
 
       // Update the state
       setQuestionInput("");
-      console.log("conversationHistory_temp: ", conversationHistory_temp);
+      console.log("conversationHistory_temp_parrot: ", conversationHistory_temp_parrot);
 
     } catch (error) {
       // Consider implementing your own error handling logic here
@@ -168,7 +162,7 @@ export default function Home() {
                 <p>
                   <strong>
                     {message.role === "user"
-                      ? "Your question"
+                      ? "You"
                       : message.role === "assistant"
                         ? "Calvinist Parrot"
                         : "Reflection question"}

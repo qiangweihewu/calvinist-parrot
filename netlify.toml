@@ -1,0 +1,4 @@
+[functions.timeout]
+    enabled = true
+    duration = 25
+    exec = true
