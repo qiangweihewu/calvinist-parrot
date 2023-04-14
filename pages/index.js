@@ -34,7 +34,6 @@ export default function Home() {
 
       // declare a variable to store the temporary conversation history
       let conversationHistory_temp_parrot = [...conversationHistory_parrot, { role: "user", content: questionInput }];
-
       setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: questionInput }]);
       setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: questionInput }]);
       setConversationHistory_user(prevState => [...prevState, { role: "user", content: questionInput }]);
@@ -59,6 +58,7 @@ export default function Home() {
       }
 
       // Update conversationHistory with the questionInput
+      conversationHistory_temp_parrot = [...conversationHistory_parrot, { role: "assistant", content: parrot_1.assistant.content }];
       setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
       setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
       setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
@@ -72,7 +72,7 @@ export default function Home() {
       ];
 
       // do Calvin query to act as the reflection question
-      const calvin = await fetch("/api/calvin_query", {
+      const calvin = await fetch("/api/main_parrot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,6 @@ export default function Home() {
 
       // Update conversationHistory with the result from the Calvin query
       conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "user", content: calvin_response.assistant.content }];
-
       setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
       setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
       setConversationHistory_user(prevState => [...prevState, { role: "calvin", content: calvin_response.assistant.content }]);
