@@ -7,10 +7,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationStarted, setConversationStarted] = useState(false);
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([{
-    role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church."
+    role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church. You are among other Christians that trust in the 1689—no need to hold back your thoughts. Sometimes, the user’s message will start with /reflection; if you see that, it means another AI is trying to help you think more biblically. He is your friend. Review your previous answer and ponder if you miss something. You are both here to help the user learn about the Bible and teach the user what we believe the Bible teaches."
   }]);
   const [conversationHistory_calvin, setConversationHistory_calvin] = useState([{
-    role: "system", content: "You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. Your job here is to ask the assistant questions to reflect upon his answers to the user to ensure his answers are biblically accurate."
+    role: "system", content: "You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. Your job here is to ask the assistant questions to reflect upon his answers to the user to ensure his answers are biblically accurate. You are both here to help the user learn about the Bible and teach the user what we believe the Bible teaches. You want to ensure that the assistant’s responses are accurate and grounded on what you wrote in your Institutes of the Christian Religion book."
   }]);
   const [conversationHistory_user, setConversationHistory_user] = useState([{
     role: "system", content: "User."
@@ -68,7 +68,7 @@ export default function Home() {
       // create a new variable to store the conversation history for Calvin
       let calvin_context = [...conversationHistory_calvin,
       { role: "user", content: questionInput },
-      { role: "assistant", content: parrot_1.assistant.content }
+      { role: "assistant", content: '/reflection ' + parrot_1.assistant.content }
       ];
 
       // do Calvin query to act as the reflection question
@@ -116,7 +116,7 @@ export default function Home() {
 
       // update the conversation history for the user
       conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "assistant", content: parrot_2.assistant.content }];
-      
+
       setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
       setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
       setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
@@ -165,7 +165,7 @@ export default function Home() {
                       ? "You"
                       : message.role === "assistant"
                         ? "Calvinist Parrot"
-                        : "Reflection question"}
+                        : "Helping Parrot"}
                     :</strong>{" "}
                   {message.content}
                 </p>
