@@ -45,12 +45,10 @@
 
   @media screen and (max-width: 768px) {
     font-size: 24px;
-    background-color: #fff;
   }
 
   ;
   line-height: 40px;
-  font-weight: bold;
   color: #202123;
   text-align: center;
 }
@@ -83,7 +81,7 @@
   flex-direction: column;
   margin-top: 70px;
   /* Match the height of .fixedContent */
-  padding-bottom: 100px;
+  padding-bottom: 120px;
   /* Match the height of .formContainer */
 }
 
@@ -138,6 +136,10 @@
   flex-direction: column;
   align-items: center;
   padding-bottom: 10px;
+}
+
+.formContainerHidden {
+  display: none;
 }
 
 .main form {
