@@ -55,7 +55,22 @@
   text-align: center;
 }
 
+.h4 {
+  font-size: 24px;
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+  }
+  ;
+  line-height: 30px;
+  color: #202123;
+  text-align: center;
+}
+
 .h3Hidden {
+  display: none;
+}
+
+.h4Hidden {
   display: none;
 }
 
