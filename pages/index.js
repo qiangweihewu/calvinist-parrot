@@ -6,15 +6,19 @@ export default function Home() {
   const [questionInput, setQuestionInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationStarted, setConversationStarted] = useState(false);
+  
+  //  this variable contains the conversation history for the parrot
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([{
-    role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church. You are among other Christians that trust in the 1689—no need to hold back your thoughts. Sometimes, the user’s message will start with /reflection; if you see that, it means another AI is trying to help you think more biblically. He is your friend. Review your previous answer and ponder if you miss something. You are both here to help the user learn about the Bible and teach the user what we believe the Bible teaches."
+    role: "system", content: "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible’s vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church. You are among other Christians that trust in the 1689—no need to hold back your thoughts. Sometimes, the user’s message will start with /calvin/; if you see that, another AI model like you is trying to help you think more biblically; to reflect upon your answer. He is your friend. Review your previous answer and ponder if you miss something. You and /calvin/ are here to help the user /human/ learn about the Bible and teach the user what we believe the Bible teaches. When refering to /calvin/ say Calvin, without the slash. When refering to /human/ say human, without the slash."
   }]);
-  const [conversationHistory_calvin, setConversationHistory_calvin] = useState([{
-    role: "system", content: "You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. Your job here is to ask the assistant questions to reflect upon his answers to the user to ensure his answers are biblically accurate. You are both here to help the user learn about the Bible and teach the user what we believe the Bible teaches. You want to ensure that the assistant’s responses are accurate and grounded on what you wrote in your Institutes of the Christian Religion book."
+
+  //  this variable contains the conversation history for Calvin
+  const [conversationHistory_calvin, setConversationHistory_calvin ] = useState([{
+    role: "system", content: "You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. You are talking with 2 users; when the message starts with /human/, that one is our user. When it begins with /parrot/, it’s another AI model like you. Your job here is to ask the /parrot/ thoughtful questions to reflect upon his answers to the user to ensure his answers are biblically accurate. You and /parrot/ are here to help the user /human/ learn about the Bible and teach him what we believe the Bible teaches. You want to ensure that the /parrot/’s responses are accurate and grounded on what you wrote in your Institutes of the Christian Religion book. You are here to help the user /human/ learn about the Bible and teach him what we believe the Bible teaches. When refering to /human/ say human, without the slash. When refering to /parrot/ say Parrot, without the slash. No need to start your messages with John Calvin: just start with your message."
   }]);
-  const [conversationHistory_user, setConversationHistory_user] = useState([{
-    role: "system", content: "User."
-  }]);
+
+  //  this variable contains the conversation history for the user
+  const [conversationHistory_user, setConversationHistory_user] = useState([{ role: "system", content: "User."}]);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -32,10 +36,9 @@ export default function Home() {
 
       setConversationStarted(true);
 
-      // declare a variable to store the temporary conversation history
-      let conversationHistory_temp_parrot = [...conversationHistory_parrot, { role: "user", content: questionInput }];
-      setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: questionInput }]);
-      setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: questionInput }]);
+      // update the conversation history for the parrot and calvin to include the user's question
+      let updatedConversationHistory_parrot = [...conversationHistory_parrot, { role: "user", content: '/human/ ' + questionInput }];
+      let updatedConversationHistory_calvin = [...conversationHistory_calvin, { role: "user", content: '/human/ ' + questionInput }];
       setConversationHistory_user(prevState => [...prevState, { role: "user", content: questionInput }]);
 
       // ------------------------------------------------------------
@@ -46,7 +49,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ conversationHistory_temp_parrot }),
+        body: JSON.stringify({ updatedConversationHistory_parrot }),
       });
 
       // Get the result from the main parrot query
@@ -58,18 +61,11 @@ export default function Home() {
       }
 
       // Update conversationHistory with the questionInput
-      conversationHistory_temp_parrot = [...conversationHistory_parrot, { role: "assistant", content: parrot_1.assistant.content }];
-      setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
-      setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
+      updatedConversationHistory_parrot = [...updatedConversationHistory_parrot, { role: "assistant", content: parrot_1.assistant.content }];
+      updatedConversationHistory_calvin = [...updatedConversationHistory_calvin, { role: "user", content: '/parrot/ ' + parrot_1.assistant.content }];
       setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_1.assistant.content }]);
 
       // ------------------------------------------------------------
-
-      // create a new variable to store the conversation history for Calvin
-      let calvin_context = [...conversationHistory_calvin,
-      { role: "user", content: questionInput },
-      { role: "assistant", content: '/reflection ' + parrot_1.assistant.content }
-      ];
 
       // do Calvin query to act as the reflection question
       const calvin = await fetch("/api/main_parrot", {
@@ -77,7 +73,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ calvin_context }),
+        body: JSON.stringify({ updatedConversationHistory_calvin }),
       });
 
       // Get the result from the Calvin query
@@ -89,9 +85,8 @@ export default function Home() {
       }
 
       // Update conversationHistory with the result from the Calvin query
-      conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "user", content: calvin_response.assistant.content }];
-      setConversationHistory_parrot(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
-      setConversationHistory_calvin(prevState => [...prevState, { role: "user", content: calvin_response.assistant.content }]);
+      updatedConversationHistory_parrot = [...updatedConversationHistory_parrot, { role: "user", content: '/calvin/ ' + calvin_response.assistant.content }];
+      updatedConversationHistory_calvin = [...updatedConversationHistory_calvin, { role: "assistant", content: calvin_response.assistant.content }];
       setConversationHistory_user(prevState => [...prevState, { role: "calvin", content: calvin_response.assistant.content }]);
 
       // ------------------------------------------------------------
@@ -102,7 +97,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ conversationHistory_temp_parrot }),
+        body: JSON.stringify({ updatedConversationHistory_parrot }),
       });
 
       // Get the result from the main parrot query
@@ -114,16 +109,17 @@ export default function Home() {
       }
 
       // update the conversation history for the user
-      conversationHistory_temp_parrot = [...conversationHistory_temp_parrot, { role: "assistant", content: parrot_2.assistant.content }];
+      updatedConversationHistory_parrot = [...updatedConversationHistory_parrot, { role: "assistant", content: parrot_2.assistant.content }];
+      updatedConversationHistory_calvin = [...updatedConversationHistory_calvin, { role: "user", content: '/parrot/ ' + parrot_2.assistant.content }];
 
-      setConversationHistory_parrot(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
-      setConversationHistory_calvin(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
+      console.log("updatedConversationHistory_parrot: ", updatedConversationHistory_parrot);
+      console.log("updatedConversationHistory_calvin: ", updatedConversationHistory_calvin);
+
+      // Update the conversation history for all three
+      setConversationHistory_parrot(updatedConversationHistory_parrot);
+      setConversationHistory_calvin(updatedConversationHistory_calvin);
       setConversationHistory_user(prevState => [...prevState, { role: "assistant", content: parrot_2.assistant.content }]);
-
-      // Update the state
       setQuestionInput("");
-      console.log("conversationHistory_temp_parrot: ", conversationHistory_temp_parrot);
-
     } catch (error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -144,6 +140,8 @@ export default function Home() {
         <div className={`${styles.fixedContent} ${conversationStarted ? styles.fixedContentCollapsed : ''}`}>
           <img src="/calvinist_parrot.gif" className={`${styles.icon} ${conversationStarted ? styles.iconCollapsed : ''}`} alt="Calvinist Parrot" />
           <h3 className={`${styles.main} ${conversationStarted ? styles.h3Hidden : ''}`}>What theological questions do you have?</h3>
+          <h4 className={`${styles.main} ${conversationStarted ? styles.h4Hidden : ''}`}>Welcome to the Calvinist Parrot chatbot. Ask a question about the Bible and I'l answer it to the best of my ability.</h4>
+          <h4 className={`${styles.main} ${conversationStarted ? styles.h4Hidden : ''}`}>I'm a work in progress, I'm not a perfect AI model, but I'm improving constantly! Right now we are 2 models, but a librarian will be added soon to help us.</h4>
         </div>
 
         <div className={styles.scrollableContent}>
