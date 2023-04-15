@@ -2,7 +2,7 @@
 
 Calvinist Parrot is an AI-driven chatbot designed to help users explore and understand the Bible through the lens of Reformed theology. This chatbot is powered by two AI agents, Calvinist Parrot and Helping Parrot, which work together to provide thoughtful, accurate, and insightful responses to users' questions.
 
-![Screenshot](public/screenshot.png)
+<img src="public/screenshot.png"  width="500">
 
 ## Features
 
