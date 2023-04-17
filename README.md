@@ -1,6 +1,6 @@
 # Calvinist Parrot Chatbot
 
-Calvinist Parrot is an AI-driven chatbot designed to help users explore and understand the Bible through the lens of Reformed theology. This chatbot is powered by two AI agents, Calvinist Parrot and Helping Parrot, which work together to provide thoughtful, accurate, and insightful responses to users' questions.
+Calvinist Parrot is an AI-driven chatbot designed to help users explore and understand the Bible through the lens of Reformed theology. This chatbot is powered by two AI agents, Parrot and Calvin, which work together to provide thoughtful, accurate, and insightful responses to users' questions.
 
 <img src="public/screenshot.png"  width="500">
 
@@ -13,7 +13,9 @@ Calvinist Parrot is an AI-driven chatbot designed to help users explore and unde
 
 ## Getting Started
 
-### Prerequisites
+Just visit [calvinistparrot.com](https://calvinistparrot.com) to start chatting with Calvinist Parrot!
+
+### Do you want to run this project locally?
 
 To run this project, you will need Node.js and npm (the Node.js package manager) installed on your machine.
 
@@ -51,4 +53,12 @@ $ npm run dev
 
 We welcome contributions to improve the Calvinist Parrot chatbot. If you have ideas, suggestions, or would like to help with development, please open an issue or submit a pull request.
 
+## Authors
 
+- [Jegama](https://jgmancilla.com)
+- [GPT-4](https://chat.openai.com/)
+
+
+## License
+
+[MIT License](/LICENSE)

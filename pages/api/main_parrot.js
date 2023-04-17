@@ -8,7 +8,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function (req, res) {
-  const conversationHistory_parrot = req.body.updatedConversationHistory_parrot  || req.body.updatedConversationHistory_calvin || [];
+  const conversationHistory_parrot = req.body.conversationHistory || [];
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
