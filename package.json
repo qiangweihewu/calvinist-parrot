@@ -18,7 +18,7 @@
   "engines": {
     "node": ">=14.6.0"
   },
-  "description": "This is an example pet name generator app used in the OpenAI API [quickstart tutorial](https://platform.openai.com/docs/quickstart). It uses the [Next.js](https://nextjs.org/) framework with [React](https://reactjs.org/). Check out the tutorial or follow the instructions below to get set up.",
+  "description": "We're here to help you explore and understand the Bible through the lens of Reformed theology. Ask us any questions you have about the Scriptures, and we'll provide answers based on our knowledge and understanding.",
   "main": "index.js",
   "devDependencies": {
     "cross-env": "^7.0.3"
