@@ -38,7 +38,6 @@ export default async function (req, res) {
 
   } catch (error) {
 
-    // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
       res.status(error.response.status).json(error.response.data);
