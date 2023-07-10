@@ -1,11 +1,29 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect  } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
   const [questionInput, setQuestionInput] = useState("");
+  const textAreaRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationStarted, setConversationStarted] = useState(false);
+  const [isStart, setIsStart] = useState(true);
+
+  // useEffect for handling body overflow
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'visible';
+    };
+  }, []);
+
+  // useEffect for handling textarea resizing
+  useEffect(() => {
+    textAreaRef.current.style.height = "inherit";
+    const scrollHeight = textAreaRef.current.scrollHeight;
+    textAreaRef.current.style.height = scrollHeight + "px";
+  }, [questionInput]);
 
   //  this variable contains the conversation history for the parrot
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([
@@ -129,7 +147,12 @@ export default function Home() {
       }
 
       setConversationStarted(true);
-      setConversationHistory_user((prevState) => prevState.slice(0, -1));
+
+      if (isStart) {
+        setIsStart(false);
+      } else {
+        setConversationHistory_user((prevState) => prevState.slice(0, -1));
+      }
 
       await interactWithAgents(questionInput);
 
@@ -210,14 +233,15 @@ export default function Home() {
 
         {isLoading && <span className={styles.loading}>Loading...</span>}
 
-        <div className={`${styles.formContainer} ${isLoading ? styles.formContainerHidden : ''}`}>
+        <div className={`${styles.inputContainer} ${isLoading ? styles.formContainerHidden : ''}`}>
           <form onSubmit={onSubmit}>
-            <input
-              type="text"
+            <textarea
+              ref={textAreaRef}
               name="question"
               placeholder="ask a question"
               value={questionInput}
               onChange={(e) => setQuestionInput(e.target.value)}
+              style={{ overflow: "hidden" }}
             />
             <input type="submit" value="Ask" />
           </form>
