@@ -30,7 +30,7 @@ export default function Home() {
     const preventScroll = (e) => {
       if (
         e.target.classList.contains(styles.fixedContent) ||
-        e.target.classList.contains(styles.formContainer)
+        e.target.classList.contains(styles.inputContainer)
       ) {
         e.preventDefault();
       }
@@ -212,7 +212,7 @@ export default function Home() {
                       {questions.map((question, qIndex) => (
                         <button
                           key={qIndex}
-                          className={styles.button} // Add the new class here
+                          className={styles.button}
                           onClick={async () => {
                             await handleButtonClick(question);
                           }}
