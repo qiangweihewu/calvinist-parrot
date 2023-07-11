@@ -25,6 +25,24 @@ export default function Home() {
     textAreaRef.current.style.height = scrollHeight + "px";
   }, [questionInput]);
 
+  // useEffect for handling body overflow on mobile
+  useEffect(() => {
+    const preventScroll = (e) => {
+      if (
+        e.target.classList.contains(styles.fixedContent) ||
+        e.target.classList.contains(styles.formContainer)
+      ) {
+        e.preventDefault();
+      }
+    };
+  
+    document.body.addEventListener("touchmove", preventScroll, { passive: false });
+  
+    return () => {
+      document.body.removeEventListener("touchmove", preventScroll);
+    };
+  }, []);  
+
   //  this variable contains the conversation history for the parrot
   const [conversationHistory_parrot, setConversationHistory_parrot] = useState([
     {
