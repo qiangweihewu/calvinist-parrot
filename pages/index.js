@@ -191,7 +191,7 @@ export default function Home() {
       <main className={styles.main}>
         <div className={`${styles.fixedContent} ${conversationStarted ? styles.fixedContentCollapsed : ''}`}>
           <img src="/calvinist_parrot.gif" className={`${styles.icon} ${conversationStarted ? styles.iconCollapsed : ''}`} alt="Calvinist Parrot" />
-          <h3 className={`${styles.main} ${conversationStarted ? styles.h3Hidden : ''}`}>What theological questions do you have?</h3>
+          <h3 className={`${styles.fixedContent} ${conversationStarted ? styles.h3Hidden : ''}`}>What theological questions do you have?</h3>
           <p className={`${styles.intro} ${conversationStarted ? styles.introHidden : ''}`}>Welcome to the Calvinist Parrot chatbot. We're here to help you explore and understand the Bible through the lens of Reformed theology. Ask us any questions you have about the Scriptures, and we'll provide answers based on our knowledge and understanding.</p>
 
           <p className={`${styles.intro} ${conversationStarted ? styles.introHidden : ''}`}>We are an AI duo - Parrot and Calvin - working together to provide thoughtful, accurate, and insightful responses to your queries. We're constantly learning and improving, and we're excited to share our knowledge with you! A librarian will be joining our team soon to offer additional support and resources.</p>
