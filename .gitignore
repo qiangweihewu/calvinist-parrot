@@ -7,7 +7,5 @@ temp/
 *.xlsx
 *.ipynb
 !ccel_index_v2.ipynb
-ccel_index/
 raw_data/
 query_engines/
-ai_parrot/

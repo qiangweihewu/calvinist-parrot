@@ -1,5 +1,5 @@
-# Create a Dockerfile for your API
-FROM python:3.11.5
+# Builder stage
+FROM python:3.11.5 AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -8,8 +8,32 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -U pip
 RUN pip install -r requirements.txt
+RUN pip install dill
 
-COPY . ./app
+# Download the NLTK punkt tokenizer
+RUN python -m nltk.downloader punkt
+
+COPY ./query_engines/theology_and_beliefs ./app/theology_and_beliefs
+COPY .env ./app/.env
+COPY main.py ./app/main.py
+COPY precompute_tasks.py ./app/precompute_tasks.py
+
+# Precompute the data
+RUN python ./app/precompute_tasks.py
+
+# Runtime stage
+FROM python:3.11.5
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the results of the precomputation from the builder stage
+COPY --from=builder /app/precomputed_results/ /app/precomputed_results/
+
+# Copy only the necessary components from the builder stage
+COPY --from=builder /app /app
+COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
 EXPOSE 80
 
