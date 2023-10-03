@@ -1,5 +1,4 @@
 import os, llama_index
-from ai_parrot.CustomConversationalChatAgent import ConversationalChatAgent
 from dotenv import load_dotenv
 from langchain.agents import AgentExecutor
 from langchain.chat_models import ChatOpenAI
@@ -9,6 +8,7 @@ from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from llama_index import ServiceContext
 
 from ai_parrot.ccelTools import toolkit
+from ai_parrot.CustomConversationalChatAgent import ConversationalChatAgent
 
 load_dotenv()
 
@@ -26,12 +26,6 @@ service_context = ServiceContext.from_defaults(
 )
 
 llama_index.set_global_service_context(service_context)
-
-with open('urls to the query engines.txt', 'r') as f:
-    urls = f.read().split('\n')
-
-with open('index_summary.txt', 'r') as f:
-    index_summary = f.read().split('\n')
 
 class CalvinistParrot():
     def create_agent(self):

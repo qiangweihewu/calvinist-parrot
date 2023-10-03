@@ -3,7 +3,7 @@ import streamlit as st
 from ai_parrot.CalvinistParrotAgent import CalvinistParrot
 from PIL import Image
 
-im = Image.open("calvinist_parrot.ico")
+im = Image.open("app/calvinist_parrot.ico")
 
 st.set_page_config(
     page_title="Calvinist Parrot v2.0", 
