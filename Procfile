@@ -1,1 +1,1 @@
-web: gunicorn calvinist_parrot:app
+web: sh setup.sh && streamlit run calvinist_parrot.py
