@@ -4,7 +4,6 @@ previous_engine = 'biblical_texts_and_commentaries'
 
 for engine in os.listdir("query_engines"):
     print(f"\n\nWorking on {engine}...")
-
     # read main.py and replace "app/ccel_index" with "app/ccel_index_test"
     with open("precompute_tasks.py", "r") as f:
         main_py = f.read()
@@ -41,22 +40,7 @@ for engine in os.listdir("query_engines"):
     print(f"Memory: {memory}")
     print(f"CPUs: {cpus}\n\n")
 
-    # build docker image
-    os.system(f"docker build -t {engine_} .")
-
-    # tag docker image
-    os.system(f"docker tag {engine_} us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_}")
-
-    # create repository in Google Cloud
-    os.system(f"gcloud artifacts repositories create {engine_} --repository-format=docker --location=us-west1 --description={engine_}")
-
-    # push docker image
-    os.system(f"docker push us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_}")
-
     # deploy docker image to Cloud Run
-    os.system(f"gcloud run deploy {engine_} --image us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_} --region us-west1 --platform managed --allow-unauthenticated --port 80 --memory {memory} --cpu {cpus} --timeout 300 --max-instances 4 --min-instances 1")
-
-    # delete docker image
-    os.system(f"docker rmi {engine_}")
+    os.system(f"gcloud run deploy {engine_}-west2 --image us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_} --region us-west2 --platform managed --allow-unauthenticated --port 80 --memory {memory} --cpu {cpus} --timeout 600 --max-instances 4 --min-instances 1")
 
     previous_engine = engine

@@ -21,7 +21,7 @@ from langchain.schema.language_model import BaseLanguageModel
 from langchain.schema.messages import AIMessage, BaseMessage, HumanMessage
 from langchain.tools.base import BaseTool
 
-from CustomPrompts import PREFIX, SUFFIX, TEMPLATE_TOOL_RESPONSE, FORMAT_INSTRUCTIONS
+from ai_parrot.CustomPrompts import PREFIX, SUFFIX, TEMPLATE_TOOL_RESPONSE, FORMAT_INSTRUCTIONS
 
 class ConversationalChatAgent(Agent):
     """An agent designed to hold a conversation in addition to using tools."""
