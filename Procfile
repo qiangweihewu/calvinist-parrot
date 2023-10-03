@@ -1,1 +1,1 @@
-web: next start -p $PORT
+web: gunicorn calvinist_parrot:app
