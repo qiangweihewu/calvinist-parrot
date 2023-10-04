@@ -17,4 +17,4 @@ gcloud artifacts repositories create streamlit-parrot --repository-format=docker
 docker push us-west1-docker.pkg.dev/calvinist-parrot/streamlit-parrot/streamlit-parrot
 
 # deploy docker image to cloud run
-gcloud run deploy biblical-texts-and-commentaries --image us-west1-docker.pkg.dev/calvinist-parrot/biblical-texts-and-commentaries/biblical-texts-and-commentaries --region us-west1 --platform managed --allow-unauthenticated --port 80 --memory 32Gi --cpu 8 --timeout 1500 --max-instances 6 --min-instances 1 --buildpack
+gcloud run deploy streamlit-parrot --image us-west1-docker.pkg.dev/calvinist-parrot/streamlit-parrot/streamlit-parrot --region us-west1 --platform managed --allow-unauthenticated --port 8080 --memory 512Mi --cpu 1 --timeout 300 --max-instances 4 --min-instances 1

@@ -116,21 +116,21 @@ toolkit = [
         func=biblical_texts_and_commentaries, 
         description="Books focusing on the interpretation, analysis, and study of biblical texts. - Includes books like The Expositor's Bible: Ezra, Nehemiah, and Esther, The Expositor's Bible: The Song of Solomon and the Lamentations of Jeremiah, The Expositor's Bible: The Epistles of St. John and authors like Calvin, John (1509-1564), Robertson, A. T. (1863-1934), Maclaren, Alexander (1826-1910)."
     ),
-    Tool(
-        name="Christian Biography", 
-        func=christian_biography, 
-        description="Biographical accounts of notable Christian figures. - Includes books like Autobiography of George Fox, Entire Sanctification, Historia Calamitatum: The Story of My Misfortunes and authors like Voragine, Jacobus de (1230-1298), Fox, George (1624-1691), Clarke, Adam."
-    ),
-    Tool(
-        name="Christian Devotional", 
-        func=christian_devotional, 
-        description="Books meant for daily Christian reflection, prayer, and meditation. - Includes books like A Book of Strife in the Form of the Diary of an Old Soul, Christ Altogether Lovely, Daily Meditations and Prayers and authors like MacDonald, George (1824-1905), Flavel, John (1630-1691), Bradford, John (1510-1555)."
-    ),
-    Tool(
-        name="Christian Fiction", 
-        func=christian_fiction, 
-        description="Fictional works that emphasize Christian themes and values. - Includes books like The Pilgrim's Progress, The Innocence of Father Brown, Magic: A Fantastic Comedy and authors like MacDonald, George (1824-1905), Tolstoy, Leo Nikolayevich (1828-1910), Chesterton, Gilbert K (1874-1936)."
-    ),
+    # Tool(
+    #     name="Christian Biography", 
+    #     func=christian_biography, 
+    #     description="Biographical accounts of notable Christian figures. - Includes books like Autobiography of George Fox, Entire Sanctification, Historia Calamitatum: The Story of My Misfortunes and authors like Voragine, Jacobus de (1230-1298), Fox, George (1624-1691), Clarke, Adam."
+    # ),
+    # Tool(
+    #     name="Christian Devotional", 
+    #     func=christian_devotional, 
+    #     description="Books meant for daily Christian reflection, prayer, and meditation. - Includes books like A Book of Strife in the Form of the Diary of an Old Soul, Christ Altogether Lovely, Daily Meditations and Prayers and authors like MacDonald, George (1824-1905), Flavel, John (1630-1691), Bradford, John (1510-1555)."
+    # ),
+    # Tool(
+    #     name="Christian Fiction", 
+    #     func=christian_fiction, 
+    #     description="Fictional works that emphasize Christian themes and values. - Includes books like The Pilgrim's Progress, The Innocence of Father Brown, Magic: A Fantastic Comedy and authors like MacDonald, George (1824-1905), Tolstoy, Leo Nikolayevich (1828-1910), Chesterton, Gilbert K (1874-1936)."
+    # ),
     Tool(
         name="Christian Life and Worship", 
         func=christian_life_and_worship, 
@@ -161,11 +161,11 @@ toolkit = [
         func=historical_and_biographical_texts, 
         description="Accounts of Christian history and biographies of significant figures. - Includes books like Biography of John Owen, ECF: Possidius: Life of St. Augustine, Funeral Sermon on Dr John Owen and authors like Schaff, Philip (1819-1893), Harnack, Adolf (1851-1930), Bangs, Nathan, D.D.."
     ),
-    Tool(
-        name="Miscellaneous Texts", 
-        func=miscellaneous_texts, 
-        description="A diverse collection of Christian texts that don't fit neatly into other categories. - Includes books like Swiss Family Robinson, Easton's Bible Dictionary, Hitchcock's Bible Names Dictionary and authors like Pearse, Roger, Chesterton, Gilbert K. (1874-1936), Anonymous."
-    ),
+    # Tool(
+    #     name="Miscellaneous Texts", 
+    #     func=miscellaneous_texts, 
+    #     description="A diverse collection of Christian texts that don't fit neatly into other categories. - Includes books like Swiss Family Robinson, Easton's Bible Dictionary, Hitchcock's Bible Names Dictionary and authors like Pearse, Roger, Chesterton, Gilbert K. (1874-1936), Anonymous."
+    # ),
     Tool(
         name="Reformed Commentaries", 
         func=reformed_commentaries, 
