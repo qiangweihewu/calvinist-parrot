@@ -1,4 +1,3 @@
-from langchain.callbacks import StreamlitCallbackHandler
 import streamlit as st
 from ai_parrot.CalvinistParrotAgent import CalvinistParrot
 from PIL import Image
@@ -6,10 +5,14 @@ from PIL import Image
 im = Image.open("app/calvinist_parrot.ico")
 
 st.set_page_config(
-    page_title="Calvinist Parrot v2.0", 
+    page_title="Calvinist Parrot v2", 
     page_icon=im,
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get help': 'https://svrbc.org/',
+        'About': "v2.0.1"
+    }
 )
 
 @st.cache_resource
@@ -20,7 +23,6 @@ custom_agent = loading_parrot()
 executor, msgs = custom_agent.create_agent()
 
 # Setup the UI
-st.title("🦜 Calvinist Parrot v2.0")
 st.sidebar.image("https://cultofthepartyparrot.com/parrots/hd/calvinist_parrot.gif",width=100)
 st.sidebar.title("Welcome to the Calvinist Parrot v2.0!")
 st.sidebar.write("I'm here to help you explore and understand the Bible through the lens of Reformed theology. Ask me any questions you have about the Scriptures, and I'll provide answers based on my knowledge and understanding.  \n\nI'm no longer an 'AI Duo', but with the help of the Christian Classics Ethereal Library, I can now provide you with a wider range of insights and answers.")
@@ -28,8 +30,6 @@ st.sidebar.markdown("I'm still learning, so please be patient with me! I'm alway
 #   \n\nI'm also open source, so if you're interested in contributing to my development, check out my [GitHub](https://github.com/Jegama/calvinist-parrot)
 st.sidebar.divider()
 clear = st.sidebar.button("Reset chat history")
-st.sidebar.divider()
-dev = st.sidebar.toggle("Dev Mode", False)
 
 if len(msgs.messages) == 0 or clear:
     msgs.clear()
@@ -46,7 +46,7 @@ for idx, msg in enumerate(msgs.messages):
             if step[0].tool == "_Exception":
                 continue
             with st.expander(f"📚 **Additional information**"):
-                st.write(f"Tool used: {step[0].tool}, with input: {step[0].tool_input}")
+                st.write(f"Category searched: {step[0].tool}, with input: {step[0].tool_input}")
                 st.write(f"{step[1]}")
                 st.divider()
 
@@ -54,17 +54,13 @@ if prompt := st.chat_input(placeholder="What is predestination?"):
     st.chat_message("user", avatar="🧑‍💻").write(prompt)
 
     with st.chat_message("assistant", avatar=im):
-        if dev:
-            st_cb = StreamlitCallbackHandler(st.container())
-            response = executor(prompt, callbacks=[st_cb])
-        else:
-            with st.spinner("Thinking..."):
-                response = executor(prompt)
+        with st.spinner("Thinking..."):
+            response = executor(prompt)
         st.write(response["output"])
         with st.expander(f"📚 **Additional information**"):
             for sources in response["intermediate_steps"]:
                 if sources[0].tool != "_Exception":
-                    st.write(f"Tool used: {sources[0].tool}, with input: {sources[0].tool_input}")
+                    st.write(f"Category searched: {sources[0].tool}, with input: {sources[0].tool_input}")
                     st.write(f"{sources[1]}")
                     st.divider()
     st.session_state.steps[str(len(msgs.messages) - 1)] = response["intermediate_steps"]

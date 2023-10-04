@@ -42,6 +42,8 @@ The tools the human can use are:
 
 {{tools}}
 
+Please favor using "Reformed Commentaries" over "Biblical Texts and Commentaries" unless user explecitly asks for a non-reformed perspective.
+
 {format_instructions}
 
 USER'S INPUT
