@@ -23,7 +23,7 @@ service_context = ServiceContext.from_defaults(
 llama_index.set_global_service_context(service_context)
 
 # The other computational tasks
-ccel_storage_context = StorageContext.from_defaults(persist_dir='app/theology_and_beliefs')
+ccel_storage_context = StorageContext.from_defaults(persist_dir='app/reformed_theology')
 
 # if precomputed_results directory doesn't exist, create it
 if not os.path.exists('precomputed_results'):

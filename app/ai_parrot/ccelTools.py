@@ -146,11 +146,11 @@ toolkit = [
         func=christian_poetry, 
         description="Poetic works with Christian themes and expressions. - Includes books like Hymns from the Land of Luther, Hymns of Ter Steegen and Others (Second Series), Hymns of Ter Steegen, Suso, and Others and authors like Bevan, Frances, Brownlie, John, Walker, William (1809-1875)."
     ),
-    Tool(
-        name="Early Christian Fathers", 
-        func=early_christian_fathers, 
-        description="Writings from early Christian leaders and theologians. - Includes books like ECF: Aphrahat: Demonstrations, ECF: Eunomius: The First Apology, ECF: Hegesippus and authors like Pearse, Roger, Roger Pearse."
-    ),
+    # Tool(
+    #     name="Early Christian Fathers", 
+    #     func=early_christian_fathers, 
+    #     description="Writings from early Christian leaders and theologians. - Includes books like ECF: Aphrahat: Demonstrations, ECF: Eunomius: The First Apology, ECF: Hegesippus and authors like Pearse, Roger, Roger Pearse."
+    # ),
     Tool(
         name="Early Christian Literature", 
         func=early_christian_literature, 
@@ -181,11 +181,11 @@ toolkit = [
         func=systematic_theology, 
         description="Comprehensive exploration of Christian doctrines and theology. - Includes books like A Body of Practical Divinity, Doctrinal Theology, History of Dogma - Volume IV and authors like Hodge, Charles (1797-1878), Hopkins, Samuel (1721-1803), Gill, John (1697-1771)."
     ),
-    Tool(
-        name="Theology", 
-        func=theology, 
-        description="In-depth studies and discussions on various theological topics. - Includes books like A Brief Declaration and Vindication of The Doctrine of the Trinity, A Discourse on the Cleansing Virtue of Christ's Blood, A Display of Arminianism and authors like Owen, John (1616-1683), Schaff, Philip (1819-1893) (Editor), Cyril of Alexandria."
-    ),
+    # Tool(
+    #     name="Theology", 
+    #     func=theology, 
+    #     description="In-depth studies and discussions on various theological topics. - Includes books like A Brief Declaration and Vindication of The Doctrine of the Trinity, A Discourse on the Cleansing Virtue of Christ's Blood, A Display of Arminianism and authors like Owen, John (1616-1683), Schaff, Philip (1819-1893) (Editor), Cyril of Alexandria."
+    # ),
     # Tool(
     #     name="Theology and Beliefs", 
     #     func=theology_and_beliefs, 
