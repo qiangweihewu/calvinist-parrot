@@ -16,4 +16,4 @@ COPY . ./app
 EXPOSE 8080
 
 # Run the app
-ENTRYPOINT ["streamlit", "run", "app/calvinist_parrot.py", "--server.address=0.0.0.0", "--server.port=8080", "--browser.gatherUsageStats=False"]
+ENTRYPOINT ["streamlit", "run", "app/Home.py", "--server.address=0.0.0.0", "--server.port=8080", "--browser.gatherUsageStats=False"]

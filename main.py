@@ -77,8 +77,7 @@ with open('precomputed_results/ccel_storage_context.pkl', 'rb') as f:
 
 ccel_index = load_index_from_storage(ccel_storage_context)
 ccel_query_engine = ccel_index.as_query_engine(
-    similarity_top_k=10,
-    response_mode="refine"
+    similarity_top_k=10
 )
 
 class Question(BaseModel):
