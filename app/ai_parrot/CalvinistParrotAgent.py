@@ -15,9 +15,8 @@ load_dotenv()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 llm = ChatOpenAI(
-    model_name="gpt-3.5-turbo", 
+    model_name="gpt-3.5-turbo-16k", 
     temperature=0,
-    streaming=True
 )
 
 llm_embeddings = OpenAIEmbeddings()

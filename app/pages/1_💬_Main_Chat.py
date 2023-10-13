@@ -9,7 +9,6 @@ st.set_page_config(
     page_title="Calvinist Parrot v2", 
     page_icon="💬",
     layout="wide",
-    initial_sidebar_state="expanded",
     menu_items={
         'Get help': 'https://svrbc.org/',
         'About': "v2.1"
@@ -19,6 +18,8 @@ st.set_page_config(
 @st.cache_resource
 def loading_parrot():
     return CalvinistParrot()
+
+custom_agent = loading_parrot()
 
 class main_parrot:
     def __init__(self):
@@ -31,6 +32,9 @@ class main_parrot:
         # to show chat history on ui
         if "messages" not in st.session_state:
             st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What passage do you want to study?"}]
+
+        self.executor, self.msgs = custom_agent.create_agent()
+
     def main(self):
         if "page" not in st.session_state:
             st.session_state["page"] = "Main Chat"
@@ -57,7 +61,7 @@ class main_parrot:
         if prompt := st.chat_input(placeholder="What is predestination?"):
             st.chat_message("user", avatar="🧑‍💻").write(prompt)
 
-            with st.chat_message("assistant", avatar=im):
+            with st.chat_message("assistant", avatar=self.im):
                 with st.spinner("Thinking..."):
                     response = self.executor(prompt)
                 st.write(response["output"])
