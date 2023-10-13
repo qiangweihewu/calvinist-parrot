@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.1"
+        'About': "v2.1.1\n\nCreated by: Jesús Mancilla\n\nFrom SVRBC"
     }
 )
 
@@ -49,6 +49,10 @@ class study_helper:
         for msg in st.session_state["messages"]:
             avatar_ = "🧑‍💻" if msg["role"] == "user" else self.im
             st.chat_message(msg["role"], avatar=avatar_).write(msg["content"])
+            if "sources" in msg.keys():
+                with st.expander(f"📚 **Additional information**"):
+                    for n, source in enumerate(msg["sources"]):
+                        st.write(f"  \nSource {n+1}:  \n\t{source.text}")
 
         prompt = st.chat_input(placeholder="I want to learn about Romans 9")
 
@@ -57,14 +61,14 @@ class study_helper:
             st.chat_message("user", avatar="🧑‍💻").write(prompt)
 
             if st.session_state.query_engine is None:
-                with st.spinner("Thinking..."):
+                with st.spinner("Fetching commentaries..."):
                     st.session_state.check = btk.check_input(prompt)
                 if st.session_state.check is None:
                     response_temp = "Sorry, I couldn't find any references in your input. Please try again."
                     st.chat_message("assistant", avatar=self.im).write(response_temp)
                     st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response_temp})
                 else:
-                    with st.spinner("Thinking..."):
+                    with st.spinner("Indexing commentaries..."):
                         st.session_state.query_engine = btk.generate_query_index()
                     response_temp = "Commentaries indexed! What question do you have?"
                     st.chat_message("assistant", avatar=self.im).write(response_temp)
@@ -73,7 +77,10 @@ class study_helper:
                     with st.spinner("Thinking..."):
                         response = st.session_state.query_engine.query(prompt)
                     st.chat_message("assistant", avatar=self.im).write(response.response)
-                    st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response.response})
+                    with st.expander(f"📚 **Excerpts from Sources**"):
+                        for n, source in enumerate(response.source_nodes):
+                            st.write(f"  \nSource {n+1}:  \n\t{source.text}")
+                    st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response.response, "sources": response.source_nodes})
 
         if st.session_state["query_engine"] is None:
             st.sidebar.write("❌ - We don't have a Query Engine...")

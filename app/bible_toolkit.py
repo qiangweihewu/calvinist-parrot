@@ -39,8 +39,7 @@ from llama_index import ServiceContext
 
 llm = ChatOpenAI(
     model_name="gpt-3.5-turbo",
-    temperature=0,
-    streaming=True
+    temperature=0
 )
 
 llm_embeddings = OpenAIEmbeddings()
@@ -67,6 +66,7 @@ def add_verse(references):
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
         book = str(i.book).lower().split('.')[1]
+        book = book.split('_')[1] + '_' + book.split('_')[0] if '_' in book else book
         for j in verse_id:
             session = Session()
             reference = bible.convert_verse_ids_to_references([j])
@@ -138,4 +138,6 @@ def generate_query_index():
     for doc in documents:
         index.insert_nodes(node_parser.get_nodes_from_documents([doc]))
 
-    return index.as_query_engine()
+    return index.as_query_engine(
+        similarity_top_k=3
+    )
