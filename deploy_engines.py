@@ -1,8 +1,8 @@
 import os
 
-previous_engine = 'biblical_texts_and_commentaries'
+previous_engine = 'early_christian_literature'
 
-available_engines = ['biblical_texts_and_commentaries', 'christian_life_and_worship', 'christian_living', 'early_christian_literature', 'historical_and_biographical_texts', 'reformed_commentaries', 'sermons', 'systematic_theology', 'christian_poetry', 'reformed_theology']
+available_engines = ['early_christian_literature', 'reformed_commentaries', 'systematic_theology']
 
 for engine in available_engines:
     print(f"\n\nWorking on {engine}...")
@@ -27,22 +27,12 @@ for engine in available_engines:
 
     engine_ = engine.replace("_", "-")
     
-    if engine_ in ['biblical-texts-and-commentaries', 'theology-and-beliefs', 'reformed-theology']:
-        memory = '16Gi'
-        cpus = 4
-        min_instances = 0
-    elif engine_ in ['sermons', 'miscellaneous', 'reformed-commentaries', 'theology', 'christian-life-and-worship', 'historical-and-biographical-texts']:
+    if engine_ == 'reformed-commentaries':
         memory = '8Gi'
         cpus = 2
-        min_instances = 0
-    elif engine_ in ['early-christian-literature', 'systematic-theology']:
+    else:
         memory = '2Gi'
         cpus = 1
-        min_instances = 1
-    else:
-        memory = '1Gi'
-        cpus = 1
-        min_instances = 0
 
     print(f"Memory: {memory}")
     print(f"CPUs: {cpus}\n\n")
@@ -60,7 +50,7 @@ for engine in available_engines:
     os.system(f"docker push us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_}")
 
     # deploy docker image to Cloud Run
-    os.system(f"gcloud run deploy {engine_}-west2 --image us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_} --region us-west2 --platform managed --allow-unauthenticated --port 80 --memory {memory} --cpu {cpus} --timeout 600 --max-instances 4 --min-instances {min_instances}")
+    os.system(f"gcloud run deploy {engine_}-west2 --image us-west1-docker.pkg.dev/calvinist-parrot/{engine_}/{engine_} --region us-west2 --platform managed --allow-unauthenticated --port 80 --memory {memory} --cpu {cpus} --timeout 600 --max-instances 4 --min-instances 1")
 
     # delete docker image
     os.system(f"docker rmi {engine_}")

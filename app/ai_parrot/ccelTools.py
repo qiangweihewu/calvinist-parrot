@@ -111,11 +111,11 @@ def theology_and_beliefs(question):
 
 
 toolkit = [
-    Tool(
-        name="Biblical Texts and Commentaries", 
-        func=biblical_texts_and_commentaries, 
-        description="Books focusing on the interpretation, analysis, and study of biblical texts. - Includes books like The Expositor's Bible: Ezra, Nehemiah, and Esther, The Expositor's Bible: The Song of Solomon and the Lamentations of Jeremiah, The Expositor's Bible: The Epistles of St. John and authors like Calvin, John (1509-1564), Robertson, A. T. (1863-1934), Maclaren, Alexander (1826-1910)."
-    ),
+    # Tool(
+    #     name="Biblical Texts and Commentaries", 
+    #     func=biblical_texts_and_commentaries, 
+    #     description="Books focusing on the interpretation, analysis, and study of biblical texts. - Includes books like The Expositor's Bible: Ezra, Nehemiah, and Esther, The Expositor's Bible: The Song of Solomon and the Lamentations of Jeremiah, The Expositor's Bible: The Epistles of St. John and authors like Calvin, John (1509-1564), Robertson, A. T. (1863-1934), Maclaren, Alexander (1826-1910)."
+    # ),
     # Tool(
     #     name="Christian Biography", 
     #     func=christian_biography, 
@@ -131,21 +131,21 @@ toolkit = [
     #     func=christian_fiction, 
     #     description="Fictional works that emphasize Christian themes and values. - Includes books like The Pilgrim's Progress, The Innocence of Father Brown, Magic: A Fantastic Comedy and authors like MacDonald, George (1824-1905), Tolstoy, Leo Nikolayevich (1828-1910), Chesterton, Gilbert K (1874-1936)."
     # ),
-    Tool(
-        name="Christian Life and Worship", 
-        func=christian_life_and_worship, 
-        description="Books on Christian practices, worship, and daily living. - Includes books like What I Saw in America, A COLLECTION OF LETTERS, A Confession and authors like Spurgeon, Charles Haddon (1834-1892), South, Robert, (1634-1716), Law, William (1686-1761)."
-    ),
-    Tool(
-        name="Christian Living", 
-        func=christian_living, 
-        description="Guides and reflections on leading a Christian life. - Includes books like A Discourse concerning Evangelical Love, Church Peace, and Unity, A Persuasive to a Holy Life: from the Happiness Which Attends It Both in This World, and in the World to Come., A Selection from his Letters and authors like Owen, John (1616-1683), Murray, Andrew, Watson, Thomas."
-    ),
-    Tool(
-        name="Christian Poetry", 
-        func=christian_poetry, 
-        description="Poetic works with Christian themes and expressions. - Includes books like Hymns from the Land of Luther, Hymns of Ter Steegen and Others (Second Series), Hymns of Ter Steegen, Suso, and Others and authors like Bevan, Frances, Brownlie, John, Walker, William (1809-1875)."
-    ),
+    # Tool(
+    #     name="Christian Life and Worship", 
+    #     func=christian_life_and_worship, 
+    #     description="Books on Christian practices, worship, and daily living. - Includes books like What I Saw in America, A COLLECTION OF LETTERS, A Confession and authors like Spurgeon, Charles Haddon (1834-1892), South, Robert, (1634-1716), Law, William (1686-1761)."
+    # ),
+    # Tool(
+    #     name="Christian Living", 
+    #     func=christian_living, 
+    #     description="Guides and reflections on leading a Christian life. - Includes books like A Discourse concerning Evangelical Love, Church Peace, and Unity, A Persuasive to a Holy Life: from the Happiness Which Attends It Both in This World, and in the World to Come., A Selection from his Letters and authors like Owen, John (1616-1683), Murray, Andrew, Watson, Thomas."
+    # ),
+    # Tool(
+    #     name="Christian Poetry", 
+    #     func=christian_poetry, 
+    #     description="Poetic works with Christian themes and expressions. - Includes books like Hymns from the Land of Luther, Hymns of Ter Steegen and Others (Second Series), Hymns of Ter Steegen, Suso, and Others and authors like Bevan, Frances, Brownlie, John, Walker, William (1809-1875)."
+    # ),
     # Tool(
     #     name="Early Christian Fathers", 
     #     func=early_christian_fathers, 
@@ -156,11 +156,11 @@ toolkit = [
         func=early_christian_literature, 
         description="Early texts, letters, and documents from the initial centuries of Christianity. - Includes books like ANF02. Fathers of the Second Century: Hermas, Tatian, Athenagoras, Theophilus, and Clement of Alexandria (Entire), ANF04. Fathers of the Third Century: Tertullian, Part Fourth; Minucius Felix; Commodian; Origen, Parts First and Second, ANF06. Fathers of the Third Century: Gregory Thaumaturgus, Dionysius the Great, Julius Africanus, Anatolius, and Minor Writers, Methodius, Arnobius and authors like Schaff, Philip (1819-1893) (Editor), Lightfoot, Joseph Barber (1828-1889), Pearse, Roger."
     ),
-    Tool(
-        name="Historical and Biographical Texts", 
-        func=historical_and_biographical_texts, 
-        description="Accounts of Christian history and biographies of significant figures. - Includes books like Biography of John Owen, ECF: Possidius: Life of St. Augustine, Funeral Sermon on Dr John Owen and authors like Schaff, Philip (1819-1893), Harnack, Adolf (1851-1930), Bangs, Nathan, D.D.."
-    ),
+    # Tool(
+    #     name="Historical and Biographical Texts", 
+    #     func=historical_and_biographical_texts, 
+    #     description="Accounts of Christian history and biographies of significant figures. - Includes books like Biography of John Owen, ECF: Possidius: Life of St. Augustine, Funeral Sermon on Dr John Owen and authors like Schaff, Philip (1819-1893), Harnack, Adolf (1851-1930), Bangs, Nathan, D.D.."
+    # ),
     # Tool(
     #     name="Miscellaneous Texts", 
     #     func=miscellaneous_texts, 
@@ -171,11 +171,11 @@ toolkit = [
         func=reformed_commentaries, 
         description="Reformed books focusing on the interpretation, analysis, and study of biblical texts. - Includes books like Harmony of the Law - Volume 3, Preface to the Letter of St. Paul to the Romans, Why Four Gospels? and authors like Pink, Arthur W., Calvin, Jean, Calvin, John (1509 - 1564)."
     ),
-    Tool(
-        name="Sermons", 
-        func=sermons, 
-        description="Collections of sermons within the CCEL - Includes books like Spurgeon's Sermons Volume 01: 1855, Spurgeon's Sermons Volume 59: 1913, Spurgeon's Sermons Volume 23: 1877 and authors like Donne, John (1572-1631), Latimer, Hugh (1485-1555), Bradford, John (1510-1555)."
-    ),
+    # Tool(
+    #     name="Sermons", 
+    #     func=sermons, 
+    #     description="Collections of sermons within the CCEL - Includes books like Spurgeon's Sermons Volume 01: 1855, Spurgeon's Sermons Volume 59: 1913, Spurgeon's Sermons Volume 23: 1877 and authors like Donne, John (1572-1631), Latimer, Hugh (1485-1555), Bradford, John (1510-1555)."
+    # ),
     Tool(
         name="Systematic Theology", 
         func=systematic_theology, 

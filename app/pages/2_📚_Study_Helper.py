@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.1.1\n\nCreated by: Jesús Mancilla\n\nFrom SVRBC"
+        'About': "v2.1.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
@@ -68,10 +68,12 @@ class study_helper:
                     st.chat_message("assistant", avatar=self.im).write(response_temp)
                     st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response_temp})
                 else:
+                    st.chat_message("assistant", avatar=self.im).write(st.session_state.check)
                     with st.spinner("Indexing commentaries..."):
                         st.session_state.query_engine = btk.generate_query_index()
                     response_temp = "Commentaries indexed! What question do you have?"
                     st.chat_message("assistant", avatar=self.im).write(response_temp)
+                    st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": st.session_state.check})
                     st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response_temp})
             else:
                     with st.spinner("Thinking..."):
@@ -85,7 +87,7 @@ class study_helper:
         if st.session_state["query_engine"] is None:
             st.sidebar.write("❌ - We don't have a Query Engine...")
         else:
-            st.sidebar.write(f"✅ - We have a Query Engine Active!  \n**{st.session_state.check}**")
+            st.sidebar.write(f"✅ - We have a Query Engine Active!  \n{st.session_state.check}")
                     
 
 if __name__ == "__main__":

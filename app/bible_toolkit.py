@@ -114,21 +114,24 @@ def get_commentary_from_db(references):
         temp = bible.convert_verse_ids_to_references([verse for verse in verse_id])
         reference_out = bible.format_scripture_references(temp)
         output += f'\n{reference_out}'
+        text_out = ''
         for j in verse_id:
             ref = bible.convert_verse_ids_to_references([j])[0]
             output += f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
-    return output, reference_out
+            text_out += f'{bible.get_verse_text(j)}\n'
+    return output, reference_out, text_out
 
 def check_input(input):
     references = bible.get_references(input)
     if len(references) == 0:
         return None
     else:
-        text_, reference_out = get_commentary_from_db(references)
+        text_, reference_out, text_out = get_commentary_from_db(references)
         # write text_ to file
         with open('temp/temp.txt', 'w', encoding="utf-8") as f:
             f.write(text_)
-        return reference_out
+
+        return f'  \n{text_out} - {reference_out}'
     
 def generate_query_index():
     print('Generating query index...')
@@ -138,6 +141,4 @@ def generate_query_index():
     for doc in documents:
         index.insert_nodes(node_parser.get_nodes_from_documents([doc]))
 
-    return index.as_query_engine(
-        similarity_top_k=3
-    )
+    return index.as_query_engine()
