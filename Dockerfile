@@ -13,7 +13,7 @@ RUN pip install dill
 # Download the NLTK punkt tokenizer
 RUN python -m nltk.downloader punkt
 
-COPY ./query_engines/reformed_theology ./app/reformed_theology
+COPY ./query_engines/systematic_theology ./app/systematic_theology
 COPY .env ./app/.env
 COPY main.py ./app/main.py
 COPY precompute_tasks.py ./app/precompute_tasks.py
