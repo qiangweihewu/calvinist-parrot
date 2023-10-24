@@ -2,8 +2,7 @@ import utils
 import streamlit as st
 from PIL import Image
 from dotenv import load_dotenv
-import bible_toolkit as btk
-from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
+import parrot_toolkit.bible_commentaries as btk
 
 load_dotenv()
 
@@ -14,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.1.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 

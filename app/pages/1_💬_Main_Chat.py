@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from ai_parrot.CalvinistParrotAgent import CalvinistParrot
+from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from PIL import Image
 from dotenv import load_dotenv
 load_dotenv()
@@ -11,7 +12,7 @@ st.set_page_config(
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.1.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
@@ -31,22 +32,25 @@ class main_parrot:
 
         # to show chat history on ui
         if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What passage do you want to study?"}]
+            st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What theological questions do you have?"}]
 
         self.executor, self.msgs = custom_agent.create_agent()
+
+    def reset_status(self):
+        st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What theological questions do you have?"}]
+        st.session_state["steps"] = {}
+        self.msgs = StreamlitChatMessageHistory()
+        self.msgs.add_ai_message("What theological questions do you have?")
 
     def main(self):
         if "page" not in st.session_state:
             st.session_state["page"] = "Main Chat"
         if st.session_state.page != "Main Chat":
             st.session_state["page"] = "Main Chat"
-            st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What theological questions do you have?"}]
-            st.session_state["steps"] = {}
+            self.reset_status()
 
         if self.clear:
-            st.session_state["messages"] = [{"role": "assistant", "avatar": self.im, "content": "What theological questions do you have?"}]
-            self.msgs.add_ai_message("What theological questions do you have?")
-            st.session_state["steps"] = {}
+            self.reset_status()
 
         for idx, msg in enumerate(st.session_state["messages"]):
             avatar_ = "🧑‍💻" if msg["role"] == "user" else self.im
@@ -60,11 +64,15 @@ class main_parrot:
 
         if prompt := st.chat_input(placeholder="What is predestination?"):
             st.chat_message("user", avatar="🧑‍💻").write(prompt)
+            self.msgs.add_user_message(prompt)
+            st.session_state.messages.append({"role": "user", "avatar": "🧑‍💻", "content": prompt})
 
             with st.chat_message("assistant", avatar=self.im):
                 with st.spinner("Thinking..."):
                     response = self.executor(prompt)
                 st.write(response["output"])
+                self.msgs.add_ai_message(response["output"])
+                st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response["output"]})
                 with st.expander(f"📚 **Additional information**"):
                     for sources in response["intermediate_steps"]:
                         if sources[0].tool != "_Exception":
