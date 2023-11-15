@@ -23,17 +23,17 @@ if "page" not in st.session_state:
 # Setup the UI
 st.image("https://cultofthepartyparrot.com/parrots/hd/calvinist_parrot.gif",width=100)
 st.title("Welcome to the Calvinist Parrot v2.2!")
-st.write("I'm here to help you explore and understand the Bible through the lens of Reformed theology. Ask me any questions about the Scriptures, and I'll provide answers based on my knowledge and understanding.  \n\nI'm no longer an 'AI Duo,' but with the help of the Christian Classics Ethereal Library, I can now provide you with a broader range of insights and answers.")
+st.write("I'm here to help you explore and understand the Bible through the lens of Reformed theology. Ask me any questions about the Scriptures, and I'll provide answers based on my knowledge and understanding.  \n\nI'm an AI-driven application. I draw information from the [CCEL](https://www.ccel.org/) and the [Bible Hub](https://biblehub.com/commentaries).")
 st.write("ESV didn't let me use their API because they are not 'approving the pairing of the ESV text with AI-generated text.' Therefore, we use the Berean Standard Bible (BSB) as our main translation. You can find more information about the BSB [here](https://berean.bible/).")
 
 st.divider()
 
 st.write("""
 👈 On the menu on the left, you can see all the tools you can use, like:
-- **Main Chat**: This is the main chat. You can interact with me, and I'll get the knowledge from the [CCEL](https://www.ccel.org/).
-- **Study Helper**: I'm creating a knowledge base from the commentaries on [Bible Hub](https://biblehub.com/commentaries). Ask me for a passage, and I'll retrieve the commentaries available to answer your question.
-- **Devotionals**: Morning and Evening devotionals based on the latest news to comfort you. Remember, AI generates these 😉.
-- **v1 Parrot**: This is the old version of the parrot. It has a lot of personality, and I missed chatting with it.
+- **[Main Chat](https://calvinistparrot.com/Main_Chat)**: This is the main chat. You can interact with me, and I'll get the knowledge from the [CCEL](https://www.ccel.org/).
+- **[Study Helper](https://calvinistparrot.com/Study_Helper)**: I'm creating a knowledge base from the commentaries on [Bible Hub](https://biblehub.com/commentaries). Ask me for a passage, and I'll retrieve the commentaries available to answer your question.
+- **[Devotionals](https://calvinistparrot.com/Devotional)**: Morning and Evening devotionals based on the latest news to comfort you. Remember, AI generates these 😉.
+- **[v1 Parrot](https://calvinistparrot.com/v1_Parrot)**: This is the old version of the parrot. It has a lot of personality, and I missed chatting with it.
 """)
 
 st.divider()
