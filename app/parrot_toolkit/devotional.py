@@ -4,8 +4,16 @@ import pythonbible as bible
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
 import pytz
-import os, openai, requests
+import os, requests
+
+import pandas as pd
+
+brb = pd.read_csv('app/brb.tsv', sep='\t')
+
 load_dotenv()
+
+from openai import OpenAI
+client = OpenAI()
 
 et = pytz.timezone('US/Eastern')
 
@@ -36,8 +44,6 @@ class Devotionals(Base):
 Base.metadata.create_all(engine)
 
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
-
-openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 def get_article(soup, found=False):
     # Find all the <div> elements on the page
@@ -127,14 +133,15 @@ def generate_devotional():
 
     message = generate_message(devotional_type, now, latest_news)
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo-1106",
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": message}
-        ]
+        ],
+        temperature = 0
     )
-    devotional_data = response['choices'][0]['message']['content']
+    devotional_data = response.choices[0].message.content
     try:
         devotional_data = eval(devotional_data)
         success = True
@@ -168,15 +175,23 @@ def check_if_devotional_exists(devotional_id):
     session.close()
 
     return devotional
-    
+
+def get_brb_text(verse):
+    return brb.loc[brb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 def get_text(verse):
     references = bible.get_references(verse)
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
-        temp = bible.convert_verse_ids_to_references([verse for verse in verse_id])
-        reference_out = bible.format_scripture_references(temp)
+        reference_out = bible.format_scripture_references([i])
         text_out = ''
         for j in verse_id:
-            text_out += f'{bible.get_verse_text(j)}\n'
-    return f'  \n{text_out} - {reference_out}'
+            temp = bible.convert_verse_ids_to_references([j])
+            temp_ref = bible.format_scripture_references(temp)
+            try:
+               text_out += f'{get_brb_text(temp_ref)}\n'
+               version = 'BRB'
+            except:
+                text_out += f'{bible.get_verse_text(j)}\n'
+                version = 'ASV'
+    return f'  \n{text_out} - {reference_out} ({version})'

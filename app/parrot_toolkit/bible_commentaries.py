@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 import pythonbible as bible
 from bs4 import BeautifulSoup
 import os, requests, llama_index
+import pandas as pd
+
+brb = pd.read_csv('app/brb.tsv', sep='\t')
+
 load_dotenv()
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -38,7 +42,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from llama_index import ServiceContext
 
 llm = ChatOpenAI(
-    model_name="gpt-3.5-turbo",
+    model_name="gpt-3.5-turbo-1106",
     temperature=0
 )
 
@@ -57,6 +61,9 @@ def get_commentary_text(url):
     jump_div = maintable2.find('div', {'id': 'jump'})
     jump_div.extract()
     return maintable2.get_text()
+
+def get_brb_text(verse):
+    return brb.loc[brb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 def add_verse(references):
     # create session
@@ -116,22 +123,29 @@ def get_commentary_from_db(references):
         output += f'\n{reference_out}'
         text_out = ''
         for j in verse_id:
-            ref = bible.convert_verse_ids_to_references([j])[0]
+            ref = bible.convert_verse_ids_to_references([j])
+            temp_ref = bible.format_scripture_references(ref)
+            ref = ref[0]
             output += f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
-            text_out += f'{bible.get_verse_text(j)}\n'
-    return output, reference_out, text_out
+            try:
+               text_out += f'{get_brb_text(temp_ref)}\n'
+               version = 'BRB'
+            except:
+                text_out += f'{bible.get_verse_text(j)}\n'
+                version = 'ASV'
+    return output, reference_out, text_out, version
 
 def check_input(input):
     references = bible.get_references(input)
     if len(references) == 0:
         return None
     else:
-        text_, reference_out, text_out = get_commentary_from_db(references)
+        text_, reference_out, text_out, version = get_commentary_from_db(references)
         # write text_ to file
         with open('temp/temp.txt', 'w', encoding="utf-8") as f:
             f.write(text_)
 
-        return f'  \n{text_out} - {reference_out}'
+        return f'  \n{text_out} - {reference_out} ({version})'
     
 def generate_query_index():
     print('Generating query index...')

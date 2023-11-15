@@ -1,13 +1,13 @@
-import os, openai
 import streamlit as st
 import ai_parrot.v1_brain as v1
 from PIL import Image
 from dotenv import load_dotenv
 load_dotenv()
 
-im = Image.open("app/calvin.ico")
+from openai import OpenAI
+client = OpenAI()
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+im = Image.open("app/calvin.ico")
 
 st.set_page_config(
     page_title="Calvinist Parrot v1", 
@@ -40,48 +40,51 @@ def interactWithAgents(question):
     with st.chat_message("parrot", avatar="🦜"):
         answer = ''
         c = st.empty()
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
             messages=st.session_state["parrot_conversation_history"],
             stream=True,
             temperature = 0
         )
         for event in response:
             c.write(answer.split('/')[-1])
-            event_text = event['choices'][0]['delta']
-            answer += event_text.get('content', '')
+            event_text = event.choices[0].delta.content
+            if event_text is not None:
+                answer += event_text
 
     update_status({"role": "parrot", "avatar": "🦜", "content": answer.split('/')[-1]})
 
     with st.chat_message("calvin", avatar=im):
         answer = ''
         c = st.empty()
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
             messages=st.session_state["calvin_conversation_history"],
             stream=True,
             temperature = 0
         )
         for event in response:
             c.write(answer.split('/')[-1])
-            event_text = event['choices'][0]['delta']
-            answer += event_text.get('content', '')
+            event_text = event.choices[0].delta.content
+            if event_text is not None:
+                answer += event_text
 
     update_status({"role": "calvin", "avatar": im, "content": answer.split('/')[-1]})
 
     with st.chat_message("parrot", avatar="🦜"):
         answer = ''
         c = st.empty()
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
             messages=st.session_state["parrot_conversation_history"],
             stream=True,
             temperature = 0
         )
         for event in response:
             c.write(answer.split('/')[-1])
-            event_text = event['choices'][0]['delta']
-            answer += event_text.get('content', '')
+            event_text = event.choices[0].delta.content
+            if event_text is not None:
+                answer += event_text
 
     update_status({"role": "parrot", "avatar": "🦜", "content": answer.split('/')[-1]})
 
