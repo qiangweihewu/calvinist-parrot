@@ -8,7 +8,7 @@ import os, requests
 
 import pandas as pd
 
-brb = pd.read_csv('app/brb.tsv', sep='\t')
+bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 
 load_dotenv()
 
@@ -176,8 +176,8 @@ def check_if_devotional_exists(devotional_id):
 
     return devotional
 
-def get_brb_text(verse):
-    return brb.loc[brb['Verse'] == verse, 'Berean Standard Bible'].values[0]
+def get_bsb_text(verse):
+    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 def get_text(verse):
     references = bible.get_references(verse)
@@ -189,8 +189,8 @@ def get_text(verse):
             temp = bible.convert_verse_ids_to_references([j])
             temp_ref = bible.format_scripture_references(temp)
             try:
-               text_out += f'{get_brb_text(temp_ref)}\n'
-               version = 'BRB'
+               text_out += f'{get_bsb_text(temp_ref)}\n'
+               version = 'BSB'
             except:
                 text_out += f'{bible.get_verse_text(j)}\n'
                 version = 'ASV'

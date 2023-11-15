@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import os, requests, llama_index
 import pandas as pd
 
-brb = pd.read_csv('app/brb.tsv', sep='\t')
+bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 
 load_dotenv()
 
@@ -62,8 +62,8 @@ def get_commentary_text(url):
     jump_div.extract()
     return maintable2.get_text()
 
-def get_brb_text(verse):
-    return brb.loc[brb['Verse'] == verse, 'Berean Standard Bible'].values[0]
+def get_bsb_text(verse):
+    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 def add_verse(references):
     # create session
@@ -128,8 +128,8 @@ def get_commentary_from_db(references):
             ref = ref[0]
             output += f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
             try:
-               text_out += f'{get_brb_text(temp_ref)}\n'
-               version = 'BRB'
+               text_out += f'{get_bsb_text(temp_ref)}\n'
+               version = 'BSB'
             except:
                 text_out += f'{bible.get_verse_text(j)}\n'
                 version = 'ASV'

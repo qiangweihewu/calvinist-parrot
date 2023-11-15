@@ -52,7 +52,10 @@ class study_helper:
                     for n, source in enumerate(msg["sources"]):
                         st.write(f"  \nSource {n+1}:  \n\t{source.text}")
 
-        prompt = st.chat_input(placeholder="I want to learn about Romans 9")
+        if st.session_state.query_engine is None:
+            prompt = st.chat_input(placeholder="Romans 9")
+        else:
+            prompt = st.chat_input(placeholder="Can you help me understand this passage?")
 
         if prompt:
             st.session_state.messages.append({"role": "user", "avatar": "🧑‍💻", "content": prompt})
