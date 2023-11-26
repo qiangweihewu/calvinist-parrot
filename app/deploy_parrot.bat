@@ -17,4 +17,10 @@ docker tag streamlit_parrot us-west1-docker.pkg.dev/calvinist-parrot/streamlit-p
 docker push us-west1-docker.pkg.dev/calvinist-parrot/streamlit-parrot/streamlit-parrot
 
 @REM # deploy docker image to cloud run
-gcloud run deploy streamlit-parrot --image us-west1-docker.pkg.dev/calvinist-parrot/streamlit-parrot/streamlit-parrot --region us-west1 --platform managed --allow-unauthenticated --port 8080 --memory 1Gi --cpu 1 --timeout 600 --max-instances 4 --min-instances 1
+gcloud run deploy streamlit-parrot \
+    --image us-west1-docker.pkg.dev/calvinist-parrot/streamlit-parrot/streamlit-parrot \
+    --region us-west1 --platform managed --allow-unauthenticated --port 8080 \
+    --memory 1Gi --cpu 1 --timeout 600 --max-instances 4 --min-instances 1 \
+    --add-cloudsql-instances calvinist-parrot:us-west1:calvinist-parrot \
+    --update-secrets=DB_PASS=DB_PASS:latest \
+    --update-secrets=GOOGLE_APPLICATION_CREDENTIALS=GOOGLE_APPLICATION_CREDENTIALS:latest

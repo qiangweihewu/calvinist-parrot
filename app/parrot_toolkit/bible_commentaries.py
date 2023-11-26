@@ -10,10 +10,10 @@ bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 
 load_dotenv()
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+import google_connector as gc
 
 # create engine
-engine = create_engine('sqlite:///bible.db', echo=False)
+pool = gc.connect_with_connector('new_verses')
 Base = declarative_base()
 
 # if temp folder doesn't exist create it
@@ -32,7 +32,7 @@ class NewVerse(Base):
         return f"<NewVerse(verse_id='{self.verse_id}', bible_hub_url='{self.bible_hub_url}', verse_text='{self.verse_text}', commentary='{self.commentary}')>"
 
 # create the table in the database
-Base.metadata.create_all(engine)
+Base.metadata.create_all(pool)
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
@@ -67,7 +67,7 @@ def get_bsb_text(verse):
 
 def add_verse(references):
     # create session
-    Session = sessionmaker(bind=engine)
+    Session = sessionmaker(bind=pool)
 
     # create a new verse
     for i in references:
@@ -98,7 +98,7 @@ def add_verse(references):
 
 def check_if_verse_exists(verse_id):
     # create session
-    Session = sessionmaker(bind=engine)
+    Session = sessionmaker(bind=pool)
     session = Session()
 
     # query the new_verses table
