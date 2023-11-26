@@ -7,6 +7,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -U pip
 RUN pip install -r requirements.txt
+RUN pip install "cloud-sql-python-connector[pg8000]"
 
 # Download the NLTK punkt tokenizer
 RUN python -m nltk.downloader punkt

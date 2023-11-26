@@ -17,11 +17,12 @@ client = OpenAI()
 
 et = pytz.timezone('US/Eastern')
 
-from sqlalchemy import Column, String, create_engine, Text
+from sqlalchemy import Column, String, create_engine, Text, engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+import google_connector as gc
 
 # create engine
-engine = create_engine('sqlite:///devotionals.db', echo=False)
+pool = gc.connect_with_connector('devotionals')
 Base = declarative_base()
 
 # if temp folder doesn't exist create it
@@ -41,7 +42,7 @@ class Devotionals(Base):
         return f"<Devotionals(devotionals_id='{self.devotionals_id}', news_articles='{self.news_articles}', bible_verse='{self.bible_verse}', title='{self.title}', devotional_text='{self.devotional_text}'')>"
 
 # create the table in the database
-Base.metadata.create_all(engine)
+Base.metadata.create_all(pool)
 
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
@@ -149,7 +150,7 @@ def generate_devotional():
         success = False
     
     if success:
-        Session = sessionmaker(bind=engine)
+        Session = sessionmaker(bind=pool)
         devotionals = Devotionals(
             devotionals_id=id,
             news_articles=links,
@@ -165,7 +166,7 @@ def generate_devotional():
 # function to check if devotional exists based on devotional id
 def check_if_devotional_exists(devotional_id):
     # create session
-    Session = sessionmaker(bind=engine)
+    Session = sessionmaker(bind=pool)
     session = Session()
 
     # query the database

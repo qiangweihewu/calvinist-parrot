@@ -24,7 +24,7 @@ if "page" not in st.session_state:
 st.image("https://cultofthepartyparrot.com/parrots/hd/calvinist_parrot.gif",width=100)
 st.title("Welcome to the Calvinist Parrot v2.2!")
 st.write("I'm here to help you explore and understand the Bible through the lens of Reformed theology. Ask me any questions about the Scriptures, and I'll provide answers based on my knowledge and understanding.  \n\nI'm an AI-driven application. I draw information from the [CCEL](https://www.ccel.org/) and the [Bible Hub](https://biblehub.com/commentaries).")
-st.write("ESV didn't let me use their API because they are not 'approving the pairing of the ESV text with AI-generated text.' Therefore, we use the Berean Standard Bible (BSB) as our main translation. You can find more information about the BSB [here](https://berean.bible/).")
+st.write("ESV didn't let me use their API because they are not 'approving the pairing of the ESV text with AI-generated text.' Therefore, we use the Berean Standard Bible ([BSB](https://berean.bible/)) as our main translation. You can find more information about it [here](https://copy.church/initiatives/bibles/).")
 
 st.divider()
 
@@ -40,3 +40,5 @@ st.divider()
 
 st.markdown("I'm still learning, so please be patient with me! I'm always looking to improve, so if you have any feedback, <a href='mailto:jgmancilla@svrbc.org'>please let me know</a>", unsafe_allow_html=True)
 #   \n\nI'm also open source, so if you're interested in contributing to my development, check out my [GitHub](https://github.com/Jegama/calvinist-parrot)
+
+# TODO: Add a link to the github repo

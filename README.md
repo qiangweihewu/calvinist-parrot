@@ -14,3 +14,5 @@ Calvinist Parrot is an AI-driven application that provides users with insights a
 This project wouldn't be possible without the following resources:
 - [CCEL](https://www.ccel.org/)
 - [Bible Hub](https://biblehub.com/commentaries)
+
+<!-- TODO: Add version history to document the changes -->
