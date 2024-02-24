@@ -116,36 +116,37 @@ def check_if_verse_exists(verse_id):
 
 def get_commentary_from_db(references):
     output = ''
+    bsb_text = ''
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
-        temp = bible.convert_verse_ids_to_references([verse for verse in verse_id])
-        reference_out = bible.format_scripture_references(temp)
+        reference_out = bible.format_scripture_references([i])
         output += f'\n{reference_out}'
-        text_out = ''
         for j in verse_id:
             ref = bible.convert_verse_ids_to_references([j])
             temp_ref = bible.format_scripture_references(ref)
             ref = ref[0]
             output += f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
             try:
-               text_out += f'{get_bsb_text(temp_ref)}\n'
-               version = 'BSB'
+                bsb_text += f'{get_bsb_text(temp_ref)}  \n'
+                version = 'BSB'
             except:
-                text_out += f'{bible.get_verse_text(j)}\n'
+                bsb_text += f'{bible.get_verse_text(j)}  \n'
                 version = 'ASV'
-    return output, reference_out, text_out, version
+        bsb_text = bsb_text[:-1]
+        bsb_text += f' - {reference_out} ({version})  \n\n'
+    return output, bsb_text
 
-def check_input(input):
-    references = bible.get_references(input)
+def check_input(input_):
+    references = bible.get_references(input_)
     if len(references) == 0:
         return None
     else:
-        text_, reference_out, text_out, version = get_commentary_from_db(references)
+        text_, bsb_text = get_commentary_from_db(references)
         # write text_ to file
         with open('temp/temp.txt', 'w', encoding="utf-8") as f:
             f.write(text_)
 
-        return f'  \n{text_out} - {reference_out} ({version})'
+        return bsb_text
     
 def generate_query_index():
     print('Generating query index...')

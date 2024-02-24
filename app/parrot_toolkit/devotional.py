@@ -111,15 +111,15 @@ Here are snippets of the latest news:
 
 ---------------------
 
-Please output a response as Markdown code snippet formatted in the following schema:
+Please output a response as JSON with the following format:
 
 {{
     "bible_verse": string, \\ The Bible verse reference of the passage you are using (e.g. Romans 3.10-12)
     "title": string \\ The title of your devotional
-    "devotional": string \\ The devotional text, 3 paragraphs long
+    "devotional": string \\ The devotional text, in the style of Charles Spurgeon's Morning and Evening Devotionals
 }}
 
-If it's a morning devotional, focus on encouraging people on growing on their faith, if it's an evening devotional, focus on conforting people on their faith. Remember that you are writing for other reformed believers. They can either believe on the 1689 London Baptist Confession of Faith or the Westminster Confession of Faith."""
+If it's a morning devotional, focus on encouraging people on growing on their faith, if it's an evening devotional, focus on conforting people on their faith. Remember that you are writing for other reformed believers. They can either believe on the 1689 London Baptist Confession of Faith or the Westminster Confession of Faith. Write it in the style of Charles Spurgeon's Morning and Evening Devotionals. Always return response as JSON."""
     
     return message
 
@@ -136,6 +136,7 @@ def generate_devotional():
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
+        response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": message}
@@ -162,6 +163,10 @@ def generate_devotional():
         session.add(devotionals)
         session.commit()
         session.close()
+    else:
+        print(devotional_data)
+        print('Error generating devotional')
+        generate_devotional()
 
 # function to check if devotional exists based on devotional id
 def check_if_devotional_exists(devotional_id):
@@ -182,17 +187,22 @@ def get_bsb_text(verse):
 
 def get_text(verse):
     references = bible.get_references(verse)
+    text_out = ''
+
     for i in references:
+        text_out += '\n'
         verse_id = bible.convert_reference_to_verse_ids(i)
         reference_out = bible.format_scripture_references([i])
-        text_out = ''
         for j in verse_id:
             temp = bible.convert_verse_ids_to_references([j])
             temp_ref = bible.format_scripture_references(temp)
             try:
-               text_out += f'{get_bsb_text(temp_ref)}\n'
-               version = 'BSB'
+                text_out += f'{get_bsb_text(temp_ref)}  \n'
+                version = 'BSB'
             except:
-                text_out += f'{bible.get_verse_text(j)}\n'
+                text_out += f'{bible.get_verse_text(j)}  \n'
                 version = 'ASV'
-    return f'  \n{text_out} - {reference_out} ({version})'
+        text_out = text_out[:-1]
+        text_out += f' - {reference_out} ({version})  \n\n'
+
+    return text_out

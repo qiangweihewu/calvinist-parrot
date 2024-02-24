@@ -41,7 +41,7 @@ def interactWithAgents(question):
         answer = ''
         c = st.empty()
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
+            model="gpt-3.5-turbo-0125",
             messages=st.session_state["parrot_conversation_history"],
             stream=True,
             temperature = 0
@@ -58,7 +58,7 @@ def interactWithAgents(question):
         answer = ''
         c = st.empty()
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
+            model="gpt-3.5-turbo-0125",
             messages=st.session_state["calvin_conversation_history"],
             stream=True,
             temperature = 0
@@ -75,7 +75,7 @@ def interactWithAgents(question):
         answer = ''
         c = st.empty()
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
+            model="gpt-3.5-turbo-0125",
             messages=st.session_state["parrot_conversation_history"],
             stream=True,
             temperature = 0

@@ -85,7 +85,7 @@ class study_helper:
         if st.session_state["query_engine"] is None:
             st.sidebar.write("❌ - We don't have a Query Engine...")
         else:
-            st.sidebar.write(f"✅ - We have a Query Engine Active!  \n{st.session_state.check}")
+            st.sidebar.write(f"✅ - We have a Query Engine Active!  \n\n{st.session_state.check}")
                     
 
 if __name__ == "__main__":
