@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.2\n\nCreated by: [Jesús Mancilla](mailto:jgmancilla@svrbc.org)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.3\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 

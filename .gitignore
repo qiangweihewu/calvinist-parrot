@@ -6,6 +6,8 @@ temp/
 *.tsv
 *.xlsx
 *.ipynb
-!ccel_index_v2.ipynb
 raw_data/
 query_engines/
+*.mp3
+transcript_*
+eval_*
