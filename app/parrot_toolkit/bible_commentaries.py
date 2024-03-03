@@ -13,7 +13,7 @@ load_dotenv()
 import google_connector as gc
 
 # create engine
-pool = gc.connect_with_connector('new_verses')
+pool = gc.connect_with_connector('parrot_db')
 Base = declarative_base()
 
 # if temp folder doesn't exist create it
