@@ -28,6 +28,8 @@ class User(Base):
     name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     conversations = relationship("ConversationHistory", back_populates="user")
+    study_helper = relationship("StudyHelper", back_populates="user")
+    sermon_review = relationship("SermonReview", back_populates="user")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -70,6 +72,28 @@ class ConversationHistory(Base):
     timestamp = Column(DateTime, default=dt.utcnow)
 
     user = relationship("User", back_populates="conversations")
+
+class StudyHelper(Base):
+    __tablename__ = 'study_helper'
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('parrot_users.user_id'))
+    conversation_name = Column(String, nullable=False)
+    messages = Column(postgresql.JSONB, nullable=False)
+    timestamp = Column(DateTime, default=dt.utcnow)
+
+    user = relationship("User", back_populates="study_helper")
+
+class SermonReview(Base):
+    __tablename__ = 'sermon_review'
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('parrot_users.user_id'))
+    sermon_title = Column(String, nullable=False)
+    preacher = Column(String, nullable=False)
+    transcript = Column(Text, nullable=False)
+    review_markdown = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=dt.utcnow)
+
+    user = relationship("User", back_populates="sermon_review")
 
 class Devotionals(Base):
     __tablename__ = 'devotionals'

@@ -1,8 +1,8 @@
 import streamlit as st
 import ai_parrot.v1_brain as v1
 import parrot_toolkit.parrot_auth as auth
-from parrot_toolkit.EncryptedCookieManager_v2 import EncryptedCookieManager
-from parrot_toolkit.sql_models import User, ConversationHistory
+from parrot_toolkit.CookieManager import NEW_CM
+from parrot_toolkit.sql_models import ConversationHistory
 from PIL import Image
 import google_connector as gc
 from sqlalchemy.orm import sessionmaker
@@ -15,7 +15,7 @@ pool = gc.connect_with_connector('parrot_db')
 SessionLocal = sessionmaker(bind=pool)
 
 st.set_page_config(
-    page_title="Calvinist Parrot v1", 
+    page_title="Calvinist Parrot", 
     page_icon="🦜",
     layout="wide",
     menu_items={
@@ -24,34 +24,22 @@ st.set_page_config(
     }
 )
 
-# get secret key from .env
-secret_key = os.getenv("SECRET_KEY")
+cookie_manager = NEW_CM()
 
-# This should be on top of your script
-cookies = EncryptedCookieManager(
-    # This prefix will get added to all your cookie names.
-    # This way you can run your app on Streamlit Cloud without cookie name clashes with other apps.
-    prefix="ktosiek/streamlit-cookies-manager/",
-    # You should really setup a long COOKIES_PASSWORD secret if you're running on Streamlit Cloud.
-    password=os.environ.get("COOKIES_PASSWORD", secret_key),
-)
-
-if not cookies.ready():
-    # Wait for the component to load and send us current cookies.
-    st.spinner()
-    st.stop()
-
-if 'token' in cookies:
-    token = cookies['token']
+if cookie_manager.get_cookie():
+    token = cookie_manager.get_cookie()
     user = auth.validate_session(token)
     if user:
         st.session_state['logged_in'] = True
         st.session_state['username'] = user.username
         st.session_state['user_id'] = user.user_id
+        st.session_state['human'] = user.name + ' - '
     else:
         st.session_state['logged_in'] = False
+        st.session_state['human'] = '/human/'
 else:
     st.session_state['logged_in'] = False
+    st.session_state['human'] = '/human/'
 
 from openai import OpenAI
 client = OpenAI()
@@ -68,9 +56,9 @@ def update_status(msg):
     st.session_state["messages"].append(msg)
     if msg['role'] == "parrot":
         st.session_state["parrot_conversation_history"].append({"role": "system", "content": msg["content"]})
-        st.session_state["calvin_conversation_history"].append({"role": "system", "content": f'/parrot/ {msg["content"]}'})
+        st.session_state["calvin_conversation_history"].append({"role": "system", "content": f'/parrot/ {msg["content"]} - What do you think, Calvin?'})
     else:
-        st.session_state["parrot_conversation_history"].append({"role": "system", "content": f'/calvin/ {msg["content"]}'})
+        st.session_state["parrot_conversation_history"].append({"role": "system", "content": f'/calvin/ {msg["content"]} - What do you think, Parrot?'})
         st.session_state["calvin_conversation_history"].append({"role": "system", "content": msg["content"]})
 
 def create_or_update_conversation(user_id, conversation_name, messages):
@@ -98,8 +86,8 @@ def create_or_update_conversation(user_id, conversation_name, messages):
         db.close()
 
 def interactWithAgents(question):
-    st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/human/ {question}'})
-    st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/human/ {question}'})
+    st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question} - What do you think, Parrot?'})
+    st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question}'})
     
     with st.chat_message("parrot", avatar="🦜"):
         answer = ''
@@ -154,6 +142,18 @@ def interactWithAgents(question):
         finally:
             db.close()
 
+def load_selected_conversation():
+    for msg in st.session_state["messages"]:
+        if msg["role"] == "parrot":
+            st.session_state["parrot_conversation_history"].append({"role": "system", "content": msg["content"]})
+            st.session_state["calvin_conversation_history"].append({"role": "system", "content": f'/parrot/ {msg["content"]} - What do you think, Calvin?'})
+        elif msg["role"] == "calvin":
+            st.session_state["parrot_conversation_history"].append({"role": "system", "content": f'/calvin/ {msg["content"]} - What do you think, Parrot?'})
+            st.session_state["calvin_conversation_history"].append({"role": "system", "content": msg["content"]})
+        else:
+            st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]} - What do you think, Parrot?'})
+            st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]}'})
+
 def load_conversation_history(user_id):
     db = SessionLocal()
     try:
@@ -168,6 +168,7 @@ def load_conversation_history(user_id):
                 if st.sidebar.button(conversation.conversation_name):
                     # Load the selected conversation into st.session_state['messages']
                     st.session_state['messages'] = conversation.messages
+                    load_selected_conversation()
                     st.session_state['new_conversation'] = False
                     st.session_state['conversation_name'] = conversation.conversation_name
                     st.rerun()
@@ -186,7 +187,7 @@ def user_verification_setup(username, password, cookies):
         st.success(f"Logged In as {username}")
         st.rerun()
     else:
-        st.sidebar.warning("Incorrect Username/Password")
+        st.warning("Incorrect Username/Password")
 
 class main_parrot:
     def __init__(self):
@@ -201,38 +202,54 @@ class main_parrot:
             st.sidebar.divider()
             if st.sidebar.button('Logout'):
                 st.session_state['logged_in'] = False
-                auth.logout(cookies)
+                cookie_manager.delete_cookie()
                 st.success("You have been logged out.")
                 reset_status()
                 st.rerun()
         else:
-            st.sidebar.write(f"Log in to see your chat history.")
-
-            collapse_login = st.sidebar.checkbox("Login", key="login_collapse", value=False)
-            if collapse_login:
-                username = st.sidebar.text_input("Username", key="username_login")
-                password = st.sidebar.text_input("Password", type='password', key="password_login")
-                if st.sidebar.button("Login"):
-                    user_verification_setup(username, password, cookies)
-            
-            collapse_register = st.sidebar.checkbox("Register", key="register_collapse", value=False)
-            if collapse_register:
-                username = st.sidebar.text_input("Username", key='username_register')
-                st.sidebar.write('In the future, the parrot will use this name to refer to you.')
-                name = st.sidebar.text_input("Name", key='name_register')
-                password = st.sidebar.text_input("Password", type='password', key='password_register')
-                if st.sidebar.button("Register"):
-                    new_user = auth.create_user(username, password, name)
-                    if new_user:
-                        user_verification_setup(username, password, cookies)
-                    else:
-                        st.warning("Failed to create user.")
+            st.sidebar.write(f"Please log in to see your chat history.")
 
         # to show chat history on ui
         if "messages" not in st.session_state:
             reset_status()
 
     def main(self):
+        if st.session_state['logged_in']:
+            st.write(f"You are logged in as {st.session_state['username']}.")
+            for msg in st.session_state["messages"]:
+                if msg["role"] == "parrot":
+                    avatar = "🦜"
+                elif msg["role"] == "calvin":
+                    avatar = im
+                else:
+                    avatar = "🧑‍💻"
+                st.chat_message(msg["role"], avatar=avatar).write(msg["content"])
+
+            if prompt := st.chat_input(placeholder="What is predestination?"):
+                st.chat_message("user", avatar="🧑‍💻").write(prompt)
+                st.session_state.messages.append({"role": "user", "avatar": "🧑‍💻", "content": prompt})
+                interactWithAgents(prompt)
+        else:
+            st.title("Welcome to the Calvinist Parrot!")
+            st.write("To take full advantage of the Calvinist Parrot, please log in. If you don't have an account, you can register for free.")
+            username = st.text_input("Username", key="username_login")
+            password = st.text_input("Password", type='password', key="password_login")
+            if st.button("Login"):
+                user_verification_setup(username, password, cookie_manager)
+
+            with st.expander("Register"):
+                username = st.text_input("Username", key='username_register')
+                st.write('In the future, the parrot will use this name to refer to you.')
+                name = st.text_input("Name", key='name_register')
+                password = st.text_input("Password", type='password', key='password_register')
+                if st.button("Register"):
+                    new_user = auth.create_user(username, password, name)
+                    if new_user:
+                        user_verification_setup(username, password, cookie_manager)
+                    else:
+                        st.warning("Failed to create user.")
+
+
         if "page" not in st.session_state:
             st.session_state["page"] = "v1 Parrot"
         if st.session_state.page != "v1 Parrot":
@@ -241,21 +258,6 @@ class main_parrot:
 
         if self.clear:
             reset_status()
-
-        for msg in st.session_state["messages"]:
-            if msg["role"] == "parrot":
-                avatar = "🦜"
-            elif msg["role"] == "calvin":
-                avatar = im
-            else:
-                avatar = "🧑‍💻"
-            st.chat_message(msg["role"], avatar=avatar).write(msg["content"])
-
-        if prompt := st.chat_input(placeholder="What is predestination?"):
-            st.chat_message("user", avatar="🧑‍💻").write(prompt)
-            st.session_state.messages.append({"role": "user", "avatar": "🧑‍💻", "content": prompt})
-            interactWithAgents(prompt)
-
 
 if __name__ == "__main__":
     obj = main_parrot()
