@@ -69,7 +69,7 @@ def create_and_append_transcripts(file_paths, output_file):
 
 system_message = "You are a Pastor of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, you have adopted the 1689 London Baptist Confession of Faith that expresses your understanding of the Bible's vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church. You are committed to teaching the Bible and its doctrines and want to train future pastors to be faithful, expository preachers."
 
-context = """You are writing a sermon evaluation based on Bryan Chappell's book, Christ-Centered Preaching. You are evaluating the sermon based on the following criteria:
+context_ = """You are writing a sermon evaluation based on Bryan Chappell's book, Christ-Centered Preaching. You are evaluating the sermon based on the following criteria:
 
 To evaluate a sermon, focus on how well it identifies the biblical text's subject and purpose, ensuring it connects deeply with the congregation's real-life challenges. A well-crafted sermon should go beyond doctrinal teachings to explore the text's original intent and its practical application for believers today. This involves thoroughly understanding the text's purpose as inspired by the Holy Spirit and its relevance to contemporary life.
 
@@ -79,7 +79,7 @@ Evaluating a sermon effectively requires understanding and identifying the Falle
 
 Moreover, the effectiveness of a sermon is also measured by its application—the "so what?" factor that moves beyond mere exposition to practical, life-changing instruction. Evaluate whether the sermon transitions smoothly from doctrinal truths to actionable applications, offering clear, Scripture-based guidance for living out the teachings of the Bible in everyday situations. This includes checking if the sermon provides a Christ-centered solution to the FCF, steering clear of simplistic, human-centered fixes, and encouraging listeners toward transformation in the likeness of Christ. A sermon that effectively articulates and applies the FCF, thereby meeting the spiritual needs of the audience with biblical fidelity and practical relevance, is considered well-crafted and impactful."""
 
-def generate_eval_message(transcript, context, outline = None):
+def generate_eval_message(transcript, context = context_, outline = None):
     if outline != None:
         context += "\n\nThese are the main point the preacher was aiming to cover:\n" + outline.replace('\n', '\n - ') + "\n\nAs part of the evaluation, I would like to see how well the preacher was able to cover these points. If the lenght of each of the points is not equal, please note of any point that was not covered or was covered sufficiently."
 
@@ -131,7 +131,7 @@ Always return response as JSON. This is very important for my career. I greatly 
     
     return message
 
-def generate_eval(transcript, context):
+def generate_eval(transcript, context = context_):
 
     message = generate_eval_message(transcript, context)
 
@@ -153,22 +153,10 @@ def generate_eval(transcript, context):
         success = False
     
     if success:
-        print('Devotional generated successfully')
+        print('First evaluation generated successfully')
         return sermon_eval
-        # Session = sessionmaker(bind=pool)
-        # devotionals = Devotionals(
-        #     devotionals_id=id,
-        #     news_articles=links,
-        #     bible_verse=devotional_data['bible_verse'],
-        #     title=devotional_data['title'],
-        #     devotional_text=devotional_data['devotional']
-        # )
-        # session = Session()
-        # session.add(devotionals)
-        # session.commit()
-        # session.close()
     else:
-        print('Error generating devotional')
+        print('Error generating first evaluation')
         return None
 
 # sermon_eval = generate_eval(transcript, context)
@@ -300,7 +288,7 @@ Always return response as JSON. This is very important for my career. I greatly 
     
     return message
 
-def generate_eval_2(transcript, context, markdown_output):
+def generate_eval_2(transcript, markdown_output, context = context_):
 
     message = generate_eval_2_message(transcript, context, markdown_output)
 
@@ -322,18 +310,17 @@ def generate_eval_2(transcript, context, markdown_output):
         success = False
     
     if success:
-        print('Devotional generated successfully')
+        print('Second evaluation generated successfully')
         return first_eval
     else:
-        print('Error generating devotional')
+        print('Error generating second evaluation')
         return None
 
 # second_eval = generate_eval_2(transcript, context, markdown_output)
 
 # Define the function to convert the provided dictionary into markdown format
 
-def convert_to_markdown_v2(sermon_scores, first_eval_markdown, output_file):
-    output_file = 'eval_' + output_file.lower().replace(' ', '_') + '.md'
+def convert_to_markdown_v2(sermon_scores, first_eval_markdown):
     # Define the template for markdown conversion
     markdown_template = """
 ## Sermon Evaluation Report
@@ -389,9 +376,6 @@ def convert_to_markdown_v2(sermon_scores, first_eval_markdown, output_file):
     """
     # Populate the template with the scores from the dictionary
     markdown_report = markdown_template.format(**sermon_scores)
-
-    with open(output_file, 'a') as file:
-        file.write(first_eval_markdown + markdown_report)
     
     return first_eval_markdown + markdown_report
 

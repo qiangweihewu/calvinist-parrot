@@ -51,13 +51,10 @@ def authenticate_user(username, password, cookies):
     user = get_user(username)
     if user and user.check_password(password):
         token = user.generate_auth_token()  # Generate a token
-        cookies['token'] = token
-        cookies.save()
+        cookies.set_cookie(token)
         return user  # Return the token instead of True
     else:
         return None
 
 def logout(cookies):
-    if 'token' in cookies:
-        cookies['token'] = ''
-        cookies.save()
+    cookies.delete_cookie()
