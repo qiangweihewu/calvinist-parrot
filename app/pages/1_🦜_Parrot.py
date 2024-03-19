@@ -237,7 +237,7 @@ class main_parrot:
             if st.button("Login"):
                 user_verification_setup(username, password, cookie_manager)
 
-            with st.expander("Register"):
+            if st.checkbox("New User? Register here."):
                 username = st.text_input("Username", key='username_register')
                 st.write('In the future, the parrot will use this name to refer to you.')
                 name = st.text_input("Name", key='name_register')

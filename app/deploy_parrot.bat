@@ -1,3 +1,6 @@
+@REM # set project
+@REM gcloud config set project calvinist-parrot
+
 @REM # build docker image
 docker build -t streamlit_parrot .
 

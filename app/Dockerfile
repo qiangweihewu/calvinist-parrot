@@ -3,6 +3,13 @@ FROM python:3.11.5
 # Set the working directory
 WORKDIR /app
 
+
+# Install ffmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install the required packages
 COPY requirements.txt requirements.txt
 RUN pip install -U pip

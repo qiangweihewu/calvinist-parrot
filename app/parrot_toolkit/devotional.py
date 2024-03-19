@@ -135,7 +135,7 @@ def generate_devotional():
     message = generate_message(devotional_type, now, latest_news)
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
+        model="gpt-4-turbo-preview",
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},

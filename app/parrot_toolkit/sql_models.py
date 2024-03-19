@@ -5,6 +5,7 @@ import sqlalchemy.dialects.postgresql as postgresql
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime as dt
 from datetime import timedelta as td
+import datetime
 import google_connector as gc
 from sqlalchemy.orm import sessionmaker
 import jwt, uuid, os
@@ -69,7 +70,7 @@ class ConversationHistory(Base):
     user_id = Column(String, ForeignKey('parrot_users.user_id'))
     conversation_name = Column(String, nullable=False)
     messages = Column(postgresql.JSONB, nullable=False)
-    timestamp = Column(DateTime, default=dt.utcnow)
+    timestamp = Column(DateTime, default=dt.now(datetime.UTC))
 
     user = relationship("User", back_populates="conversations")
 
@@ -79,7 +80,7 @@ class StudyHelper(Base):
     user_id = Column(String, ForeignKey('parrot_users.user_id'))
     conversation_name = Column(String, nullable=False)
     messages = Column(postgresql.JSONB, nullable=False)
-    timestamp = Column(DateTime, default=dt.utcnow)
+    timestamp = Column(DateTime, default=dt.now(datetime.UTC))
 
     user = relationship("User", back_populates="study_helper")
 
@@ -91,7 +92,7 @@ class SermonReview(Base):
     preacher = Column(String, nullable=False)
     transcript = Column(Text, nullable=False)
     review_markdown = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=dt.utcnow)
+    timestamp = Column(DateTime, default=dt.now(datetime.UTC))
 
     user = relationship("User", back_populates="sermon_review")
 
