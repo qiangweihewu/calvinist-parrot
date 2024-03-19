@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
-from tqdm import tqdm
 from pytube import YouTube
 from pydub import AudioSegment
+import streamlit as st
 
 load_dotenv()
 
@@ -20,8 +20,8 @@ def split_audio(file_path):
     if len(audio) % snippet_duration != 0:
         num_snippets += 1
     
-    print(f"Audio duration: {len(audio)/60000:.2f} minutes")
-    print(f"Splitting into {num_snippets} snippets")
+    st.write(f"Audio duration: {len(audio)/60000:.2f} minutes")
+    st.write(f"Splitting into {num_snippets} snippets")
     
     # Split the audio into snippets
     snippets = []
@@ -47,9 +47,9 @@ def download_audio_pytube(youtube_url, sermon_name, output_format='mp3', output_
 # parts = download_audio_pytube('https://www.youtube.com/watch?v=aJ_vpLZ0N2c', 'The Faithfulness Of The Son')
 
 def create_and_append_transcripts(file_paths, output_file):
-    output_file = output_file.lower().replace(' ', '_') + '.txt'
+    output_file = 'transcript_' + output_file.lower().replace(' ', '_') + '.txt'
     with open(output_file, 'a') as file:
-        for file_path in tqdm(file_paths):
+        for file_path in file_paths:
             audio_file = open(file_path, "rb")
             transcript = client.audio.transcriptions.create(
                 model="whisper-1",
@@ -57,11 +57,11 @@ def create_and_append_transcripts(file_paths, output_file):
             )
             file.write(transcript.text + ' ')
             audio_file.close()
-    
+
     with open(output_file, 'r') as file:
         transcript = file.read()
 
-    print(f'Total length of transcript: {len(transcript.split())} words')
+    st.write(f'Total length of transcript: {len(transcript.split())} words')
     
     return transcript
 
@@ -114,11 +114,8 @@ Please output a response as JSON with the following format:
     }},
     "general_comments": {{
         "content_comments": string, \\ Is the content substantial and biblical? How well does the content relate to the passage?
-        "content_score": string, \\ Score based on S=Superior, E=Excellent, G=Good, N=Needs Improvement, U=Unsatisfactory.
         "structure_comments": string, \\ Is it faithful to the text? Obvious from the text? Is it related to a Fallen Condition Focus? Is it moving toward a climax? 
-        "structure_score": string, \\ Score based on S=Superior, E=Excellent, G=Good, N=Needs Improvement, U=Unsatisfactory.
         "explanation_comments": string \\ How well does the preacher explain the passage? Is it faithful to the text? Obvious from the text? Is it related to a Fallen Condition Focus? Is it moving toward a climax?
-        "explanation_score": string \\ Score based on S=Superior, E=Excellent, G=Good, N=Needs Improvement, U=Unsatisfactory.
     }},
     "fallen_condition_focus": {{
         "fcf": string, \\ Fallen Condition Focus. Please be thorough and detailed.
@@ -205,12 +202,6 @@ def first_eval_to_markdown(data):
         markdown_str += f"- **Structure Comments:** {data['general_comments']['structure_comments']}\n"
     if 'explanation_comments' in data['general_comments']:
         markdown_str += f"- **Explanation Comments:** {data['general_comments']['explanation_comments']}\n"
-    
-    # Adding scores
-    markdown_str += "\n### Scores\n**S**=Superior, **E**=Excellent, **G**=Good, **N**=Needs Improvement, **U**=Unsatisfactory\n"
-    markdown_str += f"- **Content Score:** {data['general_comments']['content_score']}\n"
-    markdown_str += f"- **Structure Score:** {data['general_comments']['structure_score']}\n"
-    markdown_str += f"- **Explanation Score:** {data['general_comments']['explanation_score']}\n"
 
     # Adding fallen condition focus
     markdown_str += "\n## Fallen Condition Focus\n"

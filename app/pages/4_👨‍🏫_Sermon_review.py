@@ -36,6 +36,7 @@ else:
 
 if "page" not in st.session_state:
     st.session_state['page'] = 'Sermon Review'
+    st.session_state['review'] = None
 
 def user_verification_setup(username, password, cookies):
     verify_user = auth.authenticate_user(username, password, cookies)
@@ -96,6 +97,8 @@ class sermon_review:
                 st.session_state['logged_in'] = False
                 cookie_manager.delete_cookie()
                 st.success("You have been logged out.")
+                st.session_state['sermon_title'] = None
+                st.session_state['sermon_preacher'] = None
                 st.session_state['review'] = None
                 st.rerun()
         else:
@@ -104,10 +107,16 @@ class sermon_review:
         if "review" not in st.session_state:
             st.session_state['review'] = None
 
+        if "sermon_title" not in st.session_state:
+            st.session_state['sermon_title'] = None
+        
+        if "sermon_preacher" not in st.session_state:
+            st.session_state['sermon_preacher'] = None
+
     def main(self):
         if st.session_state['logged_in']:
             
-            if st.session_state['review']:
+            if st.session_state['review'] is not None and st.session_state['sermon_title'] is not None and st.session_state['sermon_preacher'] is not None:
                 if st.button("New Review"):
                     st.session_state['sermon_title'] = None
                     st.session_state['sermon_preacher'] = None
@@ -129,13 +138,41 @@ class sermon_review:
                 st.header("What sermon would you like to review today?")
                 st.write("The Calvinist Parrot uses Bryan Chappell's evaluation framework from his book, Christ-Centered Preaching, to evaluate sermons.")
                 output = ""
-                sermon_title = st.text_input("Enter the title of the sermon", key="sermon_title")
+                sermon_title = st.text_input("Enter the title of the sermon", key="sermon_title_field")
                 sermon_preacher = st.text_input("Enter the preacher's name", key="sermon_preacher")
-                review_text = st.text_area("Enter the transcript of the sermon", key="review_input")
-                if st.button("Generate Evaluation"):
+                if st.session_state['username'] in ['Jegama']:
+                    disable_generate = True
+                    st.write('You have access to the audio transcription tool!')
+                    if st.checkbox("Use the audio transcription tool"):
+                        youtube_link = st.text_input("Enter the YouTube link of the sermon", key="youtube_link")
+                        if st.button("Generate Transcript"):
+                            if not sermon_title or not sermon_preacher:
+                                st.warning("Please provide the title and the preacher.")
+                            else:
+                                with st.spinner("Downloading audio..."):
+                                    snippets = se.download_audio_pytube(youtube_link, sermon_title)
+                                with st.spinner("Transcribing audio..."):
+                                    review_text = se.create_and_append_transcripts(snippets, sermon_title)
+                                if review_text:
+                                    disable_generate = False
+                                    st.success("Transcript generated successfully.")
+                                    st.write("You can edit the transcript below if necessary. **Please download it** as the evaluation sometimes fails.\nIf that happens, **please use it** instead of re-doing the transcript.")
+                                    st.download_button(
+                                        "Download Transcript",
+                                        review_text,
+                                        f"{sermon_title} - Transcript.txt",
+                                        "text/plain",
+                                    )
+                    else:
+                        disable_generate = False
+                        review_text = st.text_area("Enter the transcript of the sermon", key="review_text")
+                else:
+                    disable_generate = False
+                    review_text = st.text_area("Enter the transcript of the sermon", key="review_text")
+                if st.button("Generate Evaluation", disabled=disable_generate):
                     if not sermon_title or not sermon_preacher or not review_text:
                         st.warning("Please fill in all the fields.")
-                    elif len(review_text.split()) < 100:
+                    elif len(review_text.split()) < 500:
                         st.warning("The transcript is too short. Are you sure this is the full sermon?")
                     else:
                         with st.spinner("Generating first section... This takes at least 60 seconds."):
@@ -149,18 +186,21 @@ class sermon_review:
                                     first_eval = False
                             else:
                                 st.warning("Failed to generate evaluation.")
+                                first_eval = False
                     
                         if first_eval:
                             with st.spinner("Generating second section... This takes at least 60 seconds."):
                                 second_eval = se.generate_eval_2(review_text, output)
-                                if second_eval:
-                                    st.session_state['review'] = se.convert_to_markdown_v2(second_eval, output)
+                                review_markdown = se.convert_to_markdown_v2(second_eval, output)
+                                if review_markdown:
                                     save_review_to_db(
-                                        st.session_state['user_id'],
-                                        sermon_title, sermon_preacher, review_text, output
-                                        )
-                                    output_file = 'eval_' + sermon_title.lower().replace(' ', '_') + '.md'
+                                        st.session_state['user_id'], 
+                                        sermon_title, sermon_preacher, review_text, review_markdown
+                                    )
                                     st.success("Second section generated successfully.")
+                                    st.session_state['sermon_title'] = sermon_title
+                                    st.session_state['sermon_preacher'] = sermon_preacher
+                                    st.session_state['review'] = review_markdown
                                     st.rerun()
                                 else:
                                     st.warning("Failed to generate Second section.")
@@ -173,7 +213,7 @@ class sermon_review:
             if st.button("Login"):
                 user_verification_setup(username, password, cookie_manager)
 
-            with st.expander("Register"):
+            if st.checkbox("New User? Register here."):
                 username = st.text_input("Username", key='username_register')
                 st.write('In the future, the parrot will use this name to refer to you.')
                 name = st.text_input("Name", key='name_register')
