@@ -1,3 +1,5 @@
+@REM gcloud config get-value project
+
 @REM # set project
 @REM gcloud config set project calvinist-parrot
 

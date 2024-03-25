@@ -93,7 +93,7 @@ def fech_news():
         soup = BeautifulSoup(response.content, 'html.parser')
         divs = soup.find_all('div')
         if len(divs) != 0:
-            articles.append(get_article(soup))
+            articles.append(f"{i['title']} - {get_article(soup)}")
 
     return articles, "\n - ".join(links)
 
@@ -135,7 +135,7 @@ def generate_devotional():
     message = generate_message(devotional_type, now, latest_news)
 
     response = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
+        model="gpt-4-0125-preview",
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},

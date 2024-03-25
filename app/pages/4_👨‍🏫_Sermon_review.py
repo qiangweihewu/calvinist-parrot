@@ -113,6 +113,9 @@ class sermon_review:
         if "sermon_preacher" not in st.session_state:
             st.session_state['sermon_preacher'] = None
 
+        if "yt_error" not in st.session_state:
+            st.session_state['yt_error'] = False
+
     def main(self):
         if st.session_state['logged_in']:
             
@@ -144,13 +147,32 @@ class sermon_review:
                     disable_generate = True
                     st.write('You have access to the audio transcription tool!')
                     if st.checkbox("Use the audio transcription tool"):
-                        youtube_link = st.text_input("Enter the YouTube link of the sermon", key="youtube_link")
+                        if st.session_state['yt_error']:
+                            st.warning("It looks like the link was for a YouTube Stream. I', sorry, but I can't transcribe those. Please upload the audio file instead.")
+                            uploaded_file = st.file_uploader("MP3 file of the sermon", type=["mp3"], key="audio_file")
+                            if uploaded_file is not None:
+                                bytes_data = uploaded_file.read()
+                                with open(uploaded_file.name, "wb") as f:
+                                    f.write(bytes_data)
+                                st.success("File uploaded successfully.")
+                                st.write("Filename:", uploaded_file.name)
+                        else:
+                            youtube_link = st.text_input("Enter the YouTube link of the sermon", key="youtube_link")
                         if st.button("Generate Transcript"):
                             if not sermon_title or not sermon_preacher:
                                 st.warning("Please provide the title and the preacher.")
                             else:
-                                with st.spinner("Downloading audio..."):
-                                    snippets = se.download_audio_pytube(youtube_link, sermon_title)
+                                if st.session_state['yt_error']:
+                                    with st.spinner("Splitting audio..."):
+                                        snippets = se.split_audio(uploaded_file.name)
+                                else:
+                                    with st.spinner("Downloading audio..."):
+                                        try:
+                                            snippets = se.download_audio_pytube(youtube_link, sermon_title)
+                                        except KeyError:
+                                            st.warning(f"Failed to download audio, please upload the audio file instead.")
+                                            st.session_state['yt_error'] = True
+                                            st.rerun()
                                 with st.spinner("Transcribing audio..."):
                                     review_text = se.create_and_append_transcripts(snippets, sermon_title)
                                 if review_text:
@@ -172,7 +194,7 @@ class sermon_review:
                 if st.button("Generate Evaluation", disabled=disable_generate):
                     if not sermon_title or not sermon_preacher or not review_text:
                         st.warning("Please fill in all the fields.")
-                    elif len(review_text.split()) < 500:
+                    elif len(review_text.split()) < 1000:
                         st.warning("The transcript is too short. Are you sure this is the full sermon?")
                     else:
                         with st.spinner("Generating first section... This takes at least 60 seconds."):
