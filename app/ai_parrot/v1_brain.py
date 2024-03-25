@@ -40,7 +40,7 @@ If instead of /human/ you see a name, like John, or Jegama, you should address t
 
 def get_response(messages_list, stream=True):
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-0125-preview",
         messages=messages_list,
         stream=stream,
         temperature = 0
