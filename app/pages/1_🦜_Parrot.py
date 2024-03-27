@@ -14,13 +14,16 @@ load_dotenv()
 pool = gc.connect_with_connector('parrot_db')
 SessionLocal = sessionmaker(bind=pool)
 
+parrot = Image.open("app/calvinist_parrot.ico")
+calvin = Image.open("app/calvin.ico")
+
 st.set_page_config(
     page_title="Calvinist Parrot", 
-    page_icon="🦜",
+    page_icon=parrot,
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.3\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.4\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
@@ -44,11 +47,9 @@ else:
 from openai import OpenAI
 client = OpenAI()
 
-im = Image.open("app/calvin.ico")
-
 def reset_status():
     st.session_state['new_conversation'] = True
-    st.session_state["messages"] = [{"role": "parrot", "avatar": "🦜", "content": "What theological questions do you have?"}]
+    st.session_state["messages"] = [{"role": "parrot", "avatar": parrot, "content": "What theological questions do you have?"}]
     st.session_state["parrot_conversation_history"] = [{"role": "system", "content": v1.parrot_sys_message}]
     st.session_state["calvin_conversation_history"] = [{"role": "system", "content": v1.calvin_sys_message}]
 
@@ -89,7 +90,7 @@ def interactWithAgents(question):
     st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question} - What do you think, Parrot?'})
     st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question}'})
     
-    with st.chat_message("parrot", avatar="🦜"):
+    with st.chat_message("parrot", avatar=parrot):
         answer = ''
         c = st.empty()
         response = v1.get_response(st.session_state["parrot_conversation_history"], stream=True)
@@ -101,7 +102,7 @@ def interactWithAgents(question):
 
     update_status({"role": "parrot", "content": answer.split('/')[-1]})
 
-    with st.chat_message("calvin", avatar=im):
+    with st.chat_message("calvin", avatar=calvin):
         answer = ''
         c = st.empty()
         response = v1.get_response(st.session_state["calvin_conversation_history"], stream=True)
@@ -113,7 +114,7 @@ def interactWithAgents(question):
 
     update_status({"role": "calvin", "content": answer.split('/')[-1]})
 
-    with st.chat_message("parrot", avatar="🦜"):
+    with st.chat_message("parrot", avatar=parrot):
         answer = ''
         c = st.empty()
         response = v1.get_response(st.session_state["parrot_conversation_history"], stream=True)
@@ -218,9 +219,9 @@ class main_parrot:
             st.write(f"You are logged in as {st.session_state['username']}.")
             for msg in st.session_state["messages"]:
                 if msg["role"] == "parrot":
-                    avatar = "🦜"
+                    avatar = parrot
                 elif msg["role"] == "calvin":
-                    avatar = im
+                    avatar = calvin
                 else:
                     avatar = "🧑‍💻"
                 st.chat_message(msg["role"], avatar=avatar).write(msg["content"])

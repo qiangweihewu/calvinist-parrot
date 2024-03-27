@@ -31,6 +31,7 @@ class User(Base):
     conversations = relationship("ConversationHistory", back_populates="user")
     study_helper = relationship("StudyHelper", back_populates="user")
     sermon_review = relationship("SermonReview", back_populates="user")
+    bible_studies = relationship("BibleStudies", back_populates="user")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -96,6 +97,19 @@ class SermonReview(Base):
 
     user = relationship("User", back_populates="sermon_review")
 
+class BibleStudies(Base):
+    __tablename__ = 'bible_studies'
+    bible_study_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('parrot_users.user_id'))
+    title = Column(String)
+    bible_verse = Column(String)
+    topic = Column(String)
+    audience = Column(String)
+    bible_study_text = Column(Text)
+    timestamp = Column(DateTime, default=dt.now(datetime.UTC))
+
+    user = relationship("User", back_populates="bible_studies")
+
 class Devotionals(Base):
     __tablename__ = 'devotionals'
     devotionals_id = Column(String, primary_key=True)
@@ -106,3 +120,5 @@ class Devotionals(Base):
 
     def __repr__(self):
         return f"<Devotionals(devotionals_id='{self.devotionals_id}', news_articles='{self.news_articles}', bible_verse='{self.bible_verse}', title='{self.title}', devotional_text='{self.devotional_text}'')>"
+
+Base.metadata.create_all(pool)

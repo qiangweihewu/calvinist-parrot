@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime as dt
 import pytz
 import os, requests
+from parrot_toolkit.sql_models import Devotionals
 
 import pandas as pd
 
@@ -17,32 +18,15 @@ client = OpenAI()
 
 et = pytz.timezone('US/Eastern')
 
-from sqlalchemy import Column, String, create_engine, Text, engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 import google_connector as gc
 
 # create engine
 pool = gc.connect_with_connector('parrot_db')
-Base = declarative_base()
 
 # if temp folder doesn't exist create it
 if not os.path.exists('temp'):
     os.makedirs('temp')
-
-# create table
-class Devotionals(Base):
-    __tablename__ = 'devotionals'
-    devotionals_id = Column(String, primary_key=True)
-    news_articles = Column(Text)
-    bible_verse = Column(String)
-    title = Column(String)
-    devotional_text = Column(Text)
-
-    def __repr__(self):
-        return f"<Devotionals(devotionals_id='{self.devotionals_id}', news_articles='{self.news_articles}', bible_verse='{self.bible_verse}', title='{self.title}', devotional_text='{self.devotional_text}'')>"
-
-# create the table in the database
-Base.metadata.create_all(pool)
 
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
@@ -97,7 +81,7 @@ def fech_news():
 
     return articles, "\n - ".join(links)
 
-system_message = "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, we have adopted the 1689 London Baptist Confession of Faith that expresses our understanding of the Bible's vision for the church to promote clarity and transparency at Silicon Valley Reformed Baptist Church. You write devotionals for other reformed believers to encourage them to grow in their faith."
+system_message = "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, you have adopted the 1689 London Baptist Confession of Faith that expresses your understanding of the Bible's vision for the church to promote clarity and transparency. You write devotionals for other reformed believers to encourage them to grow in their faith."
 
 
 def generate_message(devotional_type, now, latest_news):

@@ -16,7 +16,7 @@ st.set_page_config(
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.3\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.4\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
@@ -237,7 +237,6 @@ class sermon_review:
 
             if st.checkbox("New User? Register here."):
                 username = st.text_input("Username", key='username_register')
-                st.write('In the future, the parrot will use this name to refer to you.')
                 name = st.text_input("Name", key='name_register')
                 password = st.text_input("Password", type='password', key='password_register')
                 if st.button("Register"):
