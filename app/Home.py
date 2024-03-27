@@ -6,15 +6,16 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-im = Image.open("app/calvinist_parrot.ico")
+parrot = Image.open("app/calvinist_parrot.ico")
+calvin = Image.open("app/calvin.ico")
 
 st.set_page_config(
-    page_title="Calvinist Parrot v2.3", 
-    page_icon=im,
+    page_title="Calvinist Parrot v2.4", 
+    page_icon=parrot,
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.3\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.4\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
