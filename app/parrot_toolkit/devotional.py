@@ -13,6 +13,8 @@ bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 
 load_dotenv()
 
+gpt_model = os.environ.get("GPT_MODEL")
+
 from openai import OpenAI
 client = OpenAI()
 
@@ -119,7 +121,7 @@ def generate_devotional():
     message = generate_message(devotional_type, now, latest_news)
 
     response = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},

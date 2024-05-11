@@ -1,6 +1,8 @@
-import re
+import re, os
 from dotenv import load_dotenv
 load_dotenv()
+
+gpt_model = os.environ.get("GPT_MODEL")
 
 from openai import OpenAI
 client = OpenAI()
@@ -40,7 +42,7 @@ If instead of /human/ you see a name, like John, or Jegama, you should address t
 
 def get_response(messages_list, stream=True):
     response = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model=gpt_model,
         messages=messages_list,
         stream=stream,
         temperature = 0
@@ -74,7 +76,12 @@ Always return response as JSON."""
         {"role": "system", "content": 'You are a helpful assistant that can create short names for conversations.'}, {"role": "user", "content": prompt_create_name}
     ]
 
-    response = get_response(get_name_prompt, stream=False)
+    response = client.chat.completions.create(
+        model=gpt_model,
+        response_format={ "type": "json_object" },
+        messages=get_name_prompt,
+        temperature = 0
+    )
     conversation_name = response.choices[0].message.content
     try:
         conversation_name = eval(conversation_name)['name']

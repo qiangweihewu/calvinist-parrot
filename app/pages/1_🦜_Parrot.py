@@ -7,7 +7,7 @@ from PIL import Image
 import google_connector as gc
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime as dt
-import os
+import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -49,9 +49,10 @@ client = OpenAI()
 
 def reset_status():
     st.session_state['new_conversation'] = True
-    st.session_state["messages"] = [{"role": "parrot", "avatar": parrot, "content": "What theological questions do you have?"}]
+    st.session_state["messages"] = [{"role": "parrot", "content": "What theological questions do you have?"}]
     st.session_state["parrot_conversation_history"] = [{"role": "system", "content": v1.parrot_sys_message}]
     st.session_state["calvin_conversation_history"] = [{"role": "system", "content": v1.calvin_sys_message}]
+    st.rerun()
 
 def update_status(msg):
     st.session_state["messages"].append(msg)
@@ -72,7 +73,7 @@ def create_or_update_conversation(user_id, conversation_name, messages):
 
         if conversation:
             conversation.messages = messages
-            conversation.timestamp = dt.utcnow()
+            conversation.timestamp = dt.now(datetime.UTC)
         else:
             new_conversation = ConversationHistory(
                 user_id=user_id, 
@@ -82,6 +83,7 @@ def create_or_update_conversation(user_id, conversation_name, messages):
             db.add(new_conversation)
         db.commit()
     except Exception as e:
+        st.error(f"Error updating or creating conversation: {e}")
         print(f"Error updating or creating conversation: {e}")
     finally:
         db.close()
@@ -95,36 +97,36 @@ def interactWithAgents(question):
         c = st.empty()
         response = v1.get_response(st.session_state["parrot_conversation_history"], stream=True)
         for event in response:
-            c.write(answer.split('/')[-1])
+            c.write(answer)
             event_text = event.choices[0].delta.content
             if event_text is not None:
                 answer += event_text
 
-    update_status({"role": "parrot", "content": answer.split('/')[-1]})
+    update_status({"role": "parrot", "content": answer})
 
     with st.chat_message("calvin", avatar=calvin):
         answer = ''
         c = st.empty()
         response = v1.get_response(st.session_state["calvin_conversation_history"], stream=True)
         for event in response:
-            c.write(answer.split('/')[-1])
+            c.write(answer)
             event_text = event.choices[0].delta.content
             if event_text is not None:
                 answer += event_text
 
-    update_status({"role": "calvin", "content": answer.split('/')[-1]})
+    update_status({"role": "calvin", "content": answer})
 
     with st.chat_message("parrot", avatar=parrot):
         answer = ''
         c = st.empty()
         response = v1.get_response(st.session_state["parrot_conversation_history"], stream=True)
         for event in response:
-            c.write(answer.split('/')[-1])
+            c.write(answer)
             event_text = event.choices[0].delta.content
             if event_text is not None:
                 answer += event_text
 
-    update_status({"role": "parrot", "content": answer.split('/')[-1]})
+    update_status({"role": "parrot", "content": answer})
 
     if st.session_state['new_conversation']:
         conversation_name = v1.generate_conversation_name(st.session_state["messages"])
@@ -138,7 +140,7 @@ def interactWithAgents(question):
         try:
             create_or_update_conversation(st.session_state['user_id'], st.session_state['conversation_name'], st.session_state["messages"])
         except Exception as e:
-            st.error("Failed to save conversation history.")
+            st.error(f"Failed to save conversation history: {e}")
             print("Error saving conversation history: ", e)
         finally:
             db.close()

@@ -42,7 +42,7 @@ class User(Base):
     def generate_auth_token(self, expiration=3600):
         payload = {
             'user_id': self.user_id,
-            'exp': dt.utcnow() + td(seconds=expiration)
+            'exp': dt.now(datetime.UTC) + td(seconds=expiration)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         return token

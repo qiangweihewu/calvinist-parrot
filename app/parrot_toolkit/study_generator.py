@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
+
+gpt_model = os.environ.get("GPT_MODEL")
 
 from openai import OpenAI
 client = OpenAI()
@@ -60,7 +63,7 @@ def generate_draft(passage, reference, desired_topic, audience):
     message = generate_first_message(passage, reference, desired_topic, audience)
 
     response = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
+        model=gpt_model,
         messages=[
             {"role": "system", "content": system_message_parrot},
             {"role": "user", "content": message}
@@ -87,7 +90,7 @@ def generate_review(draft, reference, desired_topic, audience):
     message = generate_review_message(draft, reference, desired_topic, audience)
 
     response = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
+        model=gpt_model,
         messages=[
             {"role": "system", "content": calvin_sys_message},
             {"role": "user", "content": message}
@@ -104,7 +107,7 @@ def generate_final_study(passage, reference, desired_topic, audience, draft, rev
     new_message = f"Thank you creating the draft. {review}.\n\nPlease use this feedback to revise your Bible study. Remember to share the gospel, in case there are listeners that aren't Christians. I greatly value your thorough analysis."
 
     response = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
+        model=gpt_model,
         messages=[
             {"role": "system", "content": system_message_parrot},
             {"role": "user", "content": og_message},

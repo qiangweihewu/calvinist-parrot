@@ -2,8 +2,11 @@ from dotenv import load_dotenv
 from pytube import YouTube
 from pydub import AudioSegment
 import streamlit as st
+import os
 
 load_dotenv()
+
+gpt_model = os.environ.get("GPT_MODEL")
 
 from openai import OpenAI
 client = OpenAI()
@@ -133,8 +136,7 @@ def generate_eval(transcript, context = context_):
     message = generate_eval_message(transcript, context)
 
     response = client.chat.completions.create(
-        # model="gpt-3.5-turbo",
-        model="gpt-4-turbo-preview",
+        model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},
@@ -284,8 +286,7 @@ def generate_eval_2(transcript, markdown_output, context = context_):
     message = generate_eval_2_message(transcript, context, markdown_output)
 
     response = client.chat.completions.create(
-        # model="gpt-3.5-turbo",
-        model="gpt-4-turbo-preview",
+        model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
             {"role": "system", "content": system_message},
