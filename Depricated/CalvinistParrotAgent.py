@@ -8,14 +8,15 @@ from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from llama_index import ServiceContext
 
 from ai_parrot.ccelTools import toolkit
-from ai_parrot.CustomConversationalChatAgent import ConversationalChatAgent
+from CustomConversationalChatAgent import ConversationalChatAgent
 
 load_dotenv()
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+gpt_model = os.environ.get("GPT_MODEL")
 
 llm = ChatOpenAI(
-    model_name="gpt-3.5-turbo-16k", 
+    model_name=gpt_model, 
     temperature=0,
 )
 

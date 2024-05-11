@@ -68,7 +68,8 @@ class study_helper:
                 else:
                     st.chat_message("assistant", avatar=self.im).write(st.session_state.check)
                     with st.spinner("Indexing commentaries..."):
-                        st.session_state.query_engine = btk.generate_query_index()
+                        text_ref = st.session_state.check.split(" - ")[-1]
+                        st.session_state.query_engine = btk.generate_query_index(text_ref)
                     response_temp = "Commentaries indexed! What question do you have?"
                     st.chat_message("assistant", avatar=self.im).write(response_temp)
                     st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": st.session_state.check})

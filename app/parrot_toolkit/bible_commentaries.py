@@ -10,6 +10,8 @@ bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 
 load_dotenv()
 
+gpt_model = os.environ.get("GPT_MODEL")
+
 import google_connector as gc
 
 # create engine
@@ -34,25 +36,7 @@ class NewVerse(Base):
 # create the table in the database
 Base.metadata.create_all(pool)
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-
-from llama_index import VectorStoreIndex, SimpleDirectoryReader
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from llama_index import ServiceContext
-
-llm = ChatOpenAI(
-    model_name="gpt-3.5-turbo-1106",
-    temperature=0
-)
-
-llm_embeddings = OpenAIEmbeddings()
-
-service_context = ServiceContext.from_defaults(
-    llm=llm, embed_model=llm_embeddings
-)
-
-llama_index.set_global_service_context(service_context)
+# OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 def get_commentary_text(url):
     response = requests.get(url)
@@ -111,21 +95,21 @@ def check_if_verse_exists(verse_id):
         return verse.commentary
     else:
         new_ref = bible.convert_verse_ids_to_references([verse_id])
-        add_verse(new_ref)
+        add_verse(new_ref) # We get the commentaries from BibleHub and add them to the database
         return check_if_verse_exists(verse_id)
 
 def get_commentary_from_db(references):
-    output = ''
     bsb_text = ''
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
         reference_out = bible.format_scripture_references([i])
-        output += f'\n{reference_out}'
         for j in verse_id:
             ref = bible.convert_verse_ids_to_references([j])
             temp_ref = bible.format_scripture_references(ref)
             ref = ref[0]
-            output += f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
+            text_ = f'\n{ref.start_chapter}.{ref.start_verse} - {check_if_verse_exists(j)}'
+            with open(f'temp/{temp_ref}.txt', 'w', encoding="utf-8") as f:
+                f.write(text_)
             try:
                 bsb_text += f'{get_bsb_text(temp_ref)}  \n'
                 version = 'BSB'
@@ -134,26 +118,68 @@ def get_commentary_from_db(references):
                 version = 'ASV'
         bsb_text = bsb_text[:-1]
         bsb_text += f' - {reference_out} ({version})  \n\n'
-    return output, bsb_text
+        # print(os.listdir('temp'))
+    return bsb_text
 
 def check_input(input_):
     references = bible.get_references(input_)
     if len(references) == 0:
         return None
     else:
-        text_, bsb_text = get_commentary_from_db(references)
-        # write text_ to file
-        with open('temp/temp.txt', 'w', encoding="utf-8") as f:
-            f.write(text_)
-
+        bsb_text = get_commentary_from_db(references)
         return bsb_text
     
-def generate_query_index():
-    print('Generating query index...')
-    index = VectorStoreIndex([])
-    node_parser = index.service_context.node_parser
-    documents = SimpleDirectoryReader('temp').load_data()
-    for doc in documents:
-        index.insert_nodes(node_parser.get_nodes_from_documents([doc]))
 
-    return index.as_query_engine()
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.core.query_engine import SubQuestionQueryEngine
+from llama_index.core.callbacks import CallbackManager, LlamaDebugHandler
+
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.core import Settings
+
+import nest_asyncio
+
+nest_asyncio.apply()
+
+llm = OpenAI(
+    model=gpt_model,
+    temperature=0
+)
+
+Settings.llm = llm
+Settings.embed_model = OpenAIEmbedding()
+
+# Using the LlamaDebugHandler to print the trace of the sub questions
+# captured by the SUB_QUESTION callback event type
+llama_debug = LlamaDebugHandler(print_trace_on_end=True)
+callback_manager = CallbackManager([llama_debug])
+
+Settings.callback_manager = callback_manager
+
+def generate_query_index(text_ref):
+    documents = SimpleDirectoryReader('temp').load_data()
+    
+    vector_query_engine = VectorStoreIndex.from_documents(
+        documents,
+        use_async=True,
+    ).as_query_engine()
+
+    # setup base query engine as tool
+    query_engine_tools = [
+        QueryEngineTool(
+            query_engine=vector_query_engine,
+            metadata=ToolMetadata(
+                name="Commentaries from BibleHub",
+                description=f"Commentaries from BibleHub on {text_ref}",
+            ),
+        ),
+    ]
+
+    query_engine = SubQuestionQueryEngine.from_defaults(
+        query_engine_tools=query_engine_tools,
+        use_async=True,
+    )
+
+    return query_engine
