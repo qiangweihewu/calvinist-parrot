@@ -1,6 +1,13 @@
 import re, os
+import pandas as pd
+import pythonbible as bible
 from dotenv import load_dotenv
 load_dotenv()
+
+bsb = pd.read_csv('app/bsb.tsv', sep='\t')
+
+def get_bsb_text(verse):
+    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 gpt_model = os.environ.get("GPT_MODEL")
 
@@ -11,11 +18,11 @@ parrot_sys_message = """You are /parrot/. You are a member of the Silicon Valley
 
 This chat follows the following format:
 
-role: 'user', content: '/human/ the question you must answer.'
-role: 'assistant', content: '/parrot/ this is you. Please think step by step to ensure you reply biblically and following the 1989.'
-role: 'user', content: '/calvin/ Another AI model like you is trying to help you think more biblically to reflect upon your answer. He is your friend.'
-role: 'assistant', content: '/parrot/ you get another turn before /human/ talks again. Review your previous answer and ponder if you missed something based on /calvin/'s feedback.'
-role: 'user', content: '/human/ a follow-up question.'
+role: 'user' // /human/ - the question you must answer.
+role: 'assistant' // /parrot/ this is you. Please think step by step to ensure you reply biblically and following the 1689.
+role: 'user' // /calvin/ Another AI model like you is trying to help you think more biblically to reflect upon your answer. He is your friend.
+role: 'assistant' // /parrot/ you get another turn before /human/ talks again. Review your previous answer and ponder if you missed something based on /calvin/'s feedback.
+role: 'user' // /human/ - a follow-up question.
 
 Remember that after Calvin, you get another shot. You are *not* /human/.
 
@@ -28,11 +35,11 @@ calvin_sys_message = """You are John Calvin, the author of the Institutes of the
 
 This chat follows the following format:
 
-role: 'user', content: '/human/ the question you must answer.'
-role: 'user', content: '/parrot/ it's another AI model like you; he is a Silicon Valley Reformed Baptist Church member.'
-role: 'assistant', content: 'You ask the /parrot/ thoughtful questions to reflect upon his answers to the user to ensure his answers are biblically accurate.'
-role: 'user', content: '/parrot/ he gets another turn before /human/ talks again.'
-role: 'user', content: '/human/ a follow-up question.'
+role: 'user' // /human/ - the question you must answer.
+role: 'user' // /parrot/ it's another AI model like you; he is a Silicon Valley Reformed Baptist Church member.
+role: 'assistant' // You ask the /parrot/ thoughtful questions to reflect upon his answers to the user to ensure his answers are biblically accurate.
+role: 'user' // /parrot/ he gets another turn before /human/ talks again.
+role: 'user' // /human/ - a follow-up question.
 
 You and /parrot/ are here to help the user /human/ learn about the Bible and teach him what we believe the Bible teaches. You want to ensure that the /parrot/'s responses are accurate and grounded on what you wrote in your Institutes of the Christian Religion book. 
 
@@ -88,4 +95,49 @@ Always return response as JSON."""
         return conversation_name
     except:
         return None
-  
+
+def get_references(verse):
+    references = bible.get_references(verse)
+    output = []
+    references_out_list = []
+
+    for i in references:
+        text_out = ''
+        verse_id = bible.convert_reference_to_verse_ids(i)
+        reference_out = bible.format_scripture_references([i])
+        references_out_list.append(reference_out)
+        for j in verse_id:
+            temp = bible.convert_verse_ids_to_references([j])
+            temp_ref = bible.format_scripture_references(temp)
+            try:
+                text_out += f'{get_bsb_text(temp_ref)}  \n'
+                version = 'BSB'
+            except:
+                try:
+                    text_out += f'{bible.get_verse_text(j)}  \n'
+                    version = 'ASV'
+                except:
+                    version = '_N/A_'
+        text_out = text_out[:-1]
+        text_out += f' - {reference_out} ({version})  \n\n'
+        output.append(text_out)
+
+    return output, references_out_list
+
+def parse_footnotes(message):
+    output, references_out_list = get_references(message)
+    other = []
+    if len(references_out_list) == 0:
+        return message, other
+    else:
+        for i, v in enumerate(references_out_list):
+            if v in message:
+                tooltip_text = output[i].replace('\n', '').replace('  ', ' ').strip()
+                message = message.replace(
+                    v, 
+                    f'<span style="text-decoration: underline; cursor: help;" title="{tooltip_text}">{v}</span>'
+                )
+            else:
+                if '_N/A_' not in output[i]:
+                    other.append(output[i])
+        return message, other

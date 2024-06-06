@@ -47,34 +47,42 @@ else:
 from openai import OpenAI
 client = OpenAI()
 
+# Reset the status of the conversation
 def reset_status():
     st.session_state['new_conversation'] = True
-    st.session_state["messages"] = [{"role": "parrot", "content": "What theological questions do you have?"}]
-    st.session_state["parrot_conversation_history"] = [{"role": "system", "content": v1.parrot_sys_message}]
-    st.session_state["calvin_conversation_history"] = [{"role": "system", "content": v1.calvin_sys_message}]
+    st.session_state["messages"] = [{"role": "parrot", "content": "What theological questions do you have?"}] # What the user sees in the UI
+    st.session_state["parrot_conversation_history"] = [{"role": "system", "content": v1.parrot_sys_message}] # What is send to the Parrot
+    st.session_state["calvin_conversation_history"] = [{"role": "system", "content": v1.calvin_sys_message}] # What is send to Calvin
     st.rerun()
 
+# Update the status of the conversation
+# Make sure that whatever changes you do here, you do it in load_selected_conversation as well
 def update_status(msg):
+    # Add the message to the conversation history
     st.session_state["messages"].append(msg)
     if msg['role'] == "parrot":
-        st.session_state["parrot_conversation_history"].append({"role": "system", "content": msg["content"]})
-        st.session_state["calvin_conversation_history"].append({"role": "system", "content": f'/parrot/ {msg["content"]} - What do you think, Calvin?'})
+        st.session_state["parrot_conversation_history"].append({"role": "assistant", "content": msg["content"]}) 
+        st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/parrot/ {msg["content"]}'}) # If parrot is speaking, we need to tell Calvin that "user" is in reality another agent
     else:
-        st.session_state["parrot_conversation_history"].append({"role": "system", "content": f'/calvin/ {msg["content"]} - What do you think, Parrot?'})
-        st.session_state["calvin_conversation_history"].append({"role": "system", "content": msg["content"]})
+        st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/calvin/ {msg["content"]}'}) # If Calvin is speaking, we need to tell Parrot that "user" is in reality another agent
+        st.session_state["calvin_conversation_history"].append({"role": "assistant", "content": msg["content"]})
 
+# Create or update conversation history in the database
 def create_or_update_conversation(user_id, conversation_name, messages):
     db = SessionLocal()
     try:
+        # Check if the conversation already exists
         conversation = db.query(ConversationHistory).filter(
             ConversationHistory.user_id == user.user_id, 
             ConversationHistory.conversation_name == conversation_name
         ).first()
 
         if conversation:
+            # Update the conversation
             conversation.messages = messages
             conversation.timestamp = dt.now(datetime.UTC)
         else:
+            # Create a new conversation
             new_conversation = ConversationHistory(
                 user_id=user_id, 
                 conversation_name=conversation_name, 
@@ -88,10 +96,12 @@ def create_or_update_conversation(user_id, conversation_name, messages):
     finally:
         db.close()
 
+# This is were the magic happens
 def interactWithAgents(question):
-    st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question} - What do you think, Parrot?'})
-    st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {question}'})
+    st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} - {question}'})
+    st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} - {question}'})
     
+    # Get the response from the Parrot
     with st.chat_message("parrot", avatar=parrot):
         answer = ''
         c = st.empty()
@@ -102,8 +112,10 @@ def interactWithAgents(question):
             if event_text is not None:
                 answer += event_text
 
+    # Add the response to the conversation history
     update_status({"role": "parrot", "content": answer})
 
+    # Get the response from Calvin
     with st.chat_message("calvin", avatar=calvin):
         answer = ''
         c = st.empty()
@@ -114,8 +126,10 @@ def interactWithAgents(question):
             if event_text is not None:
                 answer += event_text
 
+    # Add the response to the conversation history
     update_status({"role": "calvin", "content": answer})
 
+    # Get the response from the Parrot
     with st.chat_message("parrot", avatar=parrot):
         answer = ''
         c = st.empty()
@@ -126,8 +140,10 @@ def interactWithAgents(question):
             if event_text is not None:
                 answer += event_text
 
+    # Add the response to the conversation history
     update_status({"role": "parrot", "content": answer})
 
+    # Generate a conversation name if it's a new conversation
     if st.session_state['new_conversation']:
         conversation_name = v1.generate_conversation_name(st.session_state["messages"])
         if conversation_name:
@@ -144,19 +160,24 @@ def interactWithAgents(question):
             print("Error saving conversation history: ", e)
         finally:
             db.close()
+    
+    st.rerun()
 
+# Load the selected conversation into the chat UI - Similar logic to update_status
+# Make sure that whatever changes you do here, you do it in update_status as well
 def load_selected_conversation():
     for msg in st.session_state["messages"]:
         if msg["role"] == "parrot":
-            st.session_state["parrot_conversation_history"].append({"role": "system", "content": msg["content"]})
-            st.session_state["calvin_conversation_history"].append({"role": "system", "content": f'/parrot/ {msg["content"]} - What do you think, Calvin?'})
+            st.session_state["parrot_conversation_history"].append({"role": "assistant", "content": msg["content"]})
+            st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/parrot/ {msg["content"]}'})
         elif msg["role"] == "calvin":
-            st.session_state["parrot_conversation_history"].append({"role": "system", "content": f'/calvin/ {msg["content"]} - What do you think, Parrot?'})
-            st.session_state["calvin_conversation_history"].append({"role": "system", "content": msg["content"]})
+            st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/calvin/ {msg["content"]}'})
+            st.session_state["calvin_conversation_history"].append({"role": "assistant", "content": msg["content"]})
         else:
-            st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]} - What do you think, Parrot?'})
+            st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]}'})
             st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]}'})
 
+# Load the conversation history for the logged-in user and display it in the sidebar
 def load_conversation_history(user_id):
     db = SessionLocal()
     try:
@@ -242,7 +263,7 @@ class main_parrot:
 
             if st.checkbox("New User? Register here."):
                 username = st.text_input("Username", key='username_register')
-                st.write('In the future, the parrot will use this name to refer to you.')
+                st.write('The parrot will use this name to refer to you.')
                 name = st.text_input("Name", key='name_register')
                 password = st.text_input("Password", type='password', key='password_register')
                 if st.button("Register"):
