@@ -80,7 +80,11 @@ class study_helper:
                     st.chat_message("assistant", avatar=self.im).write(response.response)
                     with st.expander(f"📚 **Excerpts from Sources**"):
                         for n, source in enumerate(response.source_nodes):
-                            st.write(f"  \nSource {n+1}:  \n\t{source.text}")
+                            if source.text.startswith("Sub question:"):
+                                new_text = source.text.replace("Sub question:", "  \n**Sub question:**").replace("Response:", "  \n**Response:**")
+                                st.write(f"  \n**Source {n+1}:**  \n{new_text}")
+                            else:
+                                st.write(f"  \n**Source {n+1}:**  \n{source.text}")
                     st.session_state.messages.append({"role": "assistant", "avatar": self.im, "content": response.response, "sources": response.source_nodes})
 
         if st.session_state["query_engine"] is None:
