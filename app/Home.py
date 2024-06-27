@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide",
     menu_items={
         'Get help': 'https://svrbc.org/',
-        'About': "v2.4\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
+        'About': "v2.5\n\nCreated by: [Jesús Mancilla](mailto:jesus@jgmancilla.com)\n\nFrom [SVRBC](https://svrbc.org/)\n\n"
     }
 )
 
@@ -51,6 +51,7 @@ st.divider()
 st.write("""
 👈 On the menu on the left, you can see all the tools you can use, like:
 - **[Parrot](https://calvinistparrot.com/Parrot)**: You can chat with me here. I'll try to answer your questions based on my knowledge and understanding of the Bible from a Reformed perspective.
+- **[CCEL](https://calvinistparrot.com/CCEL)**: You can search the [Christian Classics Ethereal Library](https://ccel.org) here. I'll try to find the best match for your query.
 - **[Study Helper](https://calvinistparrot.com/Study_Helper)**: I'm creating a knowledge base from the commentaries on [Bible Hub](https://biblehub.com/commentaries). Ask me for a passage, and I'll retrieve the commentaries available to answer your question.
 - **[Devotionals](https://calvinistparrot.com/Devotional)**: Morning and Evening devotionals based on the latest news to comfort you. Remember, AI generates these 😉.
 - **[Sermon Review](https://calvinistparrot.com/Sermon_review)**: You can review sermons here. The evaluation based on Bryan Chappell's evaluation framework from his book, Christ-Centered Preaching.
@@ -60,7 +61,8 @@ st.divider()
 
 st.write("""
 - Feb 2024 update: Due to lack of funding, I'm depricating the "Main Chat" since the cost to maintain the CCEL index is too high. I'm sorry for the inconvenience. I'll keep the "Study Helper" and "Devotionals" tools available. I'm also working on a new tool to help you study the Bible. Stay tuned!
-- Mar 2024 update: New sermon review tool is up! You can now review sermons using Bryan Chappell's evaluation framework from his book, Christ-Centered Preaching. 
+- Mar 2024 update: New sermon review tool is up! You can now review sermons using Bryan Chappell's evaluation framework from his book, Christ-Centered Preaching.
+- June 2024 update: The CCEL tool is back!
 
 Fair warning: Session management is a bit wonky. I'm working on it. iOS doesn't play very well with sessions. I'm sorry for the inconvenience.
 """)
