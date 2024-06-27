@@ -1,4 +1,3 @@
-# Assuming this is in your_user_model_file.py or similar
 from sqlalchemy import Column, String, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship,declarative_base
 import sqlalchemy.dialects.postgresql as postgresql

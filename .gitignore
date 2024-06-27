@@ -1,9 +1,11 @@
 .*
 __pycache__/
 temp/
+ccel/
 !.gitignore
 *.csv
 *.tsv
+!bsb.tsv
 *.xlsx
 *.ipynb
 raw_data/
