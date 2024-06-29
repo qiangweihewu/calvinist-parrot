@@ -1,5 +1,5 @@
 import streamlit as st
-from ai_parrot.CalvinistParrotAgent import CalvinistParrot
+from parrot_ai.CalvinistParrotAgent import CalvinistParrot
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from PIL import Image
 from dotenv import load_dotenv

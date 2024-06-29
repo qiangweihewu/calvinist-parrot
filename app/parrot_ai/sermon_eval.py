@@ -1,3 +1,6 @@
+import streamlit as st
+from parrot_toolkit.sql_models import SermonReview, SessionLocal
+from parrot_ai.core.prompts import SERMON_REVIEW_SYS_PROMPT, SERMON_REVIEW_CONTEXT
 from dotenv import load_dotenv
 from pytube import YouTube
 from pydub import AudioSegment
@@ -7,6 +10,35 @@ import os
 load_dotenv()
 
 gpt_model = os.environ.get("GPT_MODEL")
+
+
+def save_review_to_db(user_id, sermon_title, preacher, transcript, review):
+    db = SessionLocal()
+    new_review = SermonReview(
+        user_id=user_id, 
+        sermon_title=sermon_title, 
+        preacher=preacher, 
+        transcript=transcript, 
+        review_markdown=review
+    )
+    db.add(new_review)
+    db.commit()
+    db.close()
+
+def get_reviews(user_id):
+    db = SessionLocal()
+    try:
+        reviews = db.query(SermonReview).filter(
+            SermonReview.user_id == user_id
+        ).order_by(SermonReview.timestamp.desc()).all()
+        db.close()
+    except Exception as e:
+        st.sidebar.error(f"An unexpected error occurred while loading the previous reviews: {e}")
+        reviews = []
+    finally:
+        db.close()
+        
+    return reviews
 
 from openai import OpenAI
 client = OpenAI()
@@ -70,19 +102,7 @@ def create_and_append_transcripts(file_paths, output_file):
 
 # transcript = create_and_append_transcripts(parts, 'The Faithfulness Of The Son')
 
-system_message = "You are a Pastor of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, you have adopted the 1689 London Baptist Confession of Faith that expresses your understanding of the Bible's vision for the church to promote clarity and transparency. You are committed to teaching the Bible and its doctrines and want to train future pastors to be faithful, expository preachers."
-
-context_ = """You are writing a sermon evaluation based on Bryan Chappell's book, Christ-Centered Preaching. You are evaluating the sermon based on the following criteria:
-
-To evaluate a sermon, focus on how well it identifies the biblical text's subject and purpose, ensuring it connects deeply with the congregation's real-life challenges. A well-crafted sermon should go beyond doctrinal teachings to explore the text's original intent and its practical application for believers today. This involves thoroughly understanding the text's purpose as inspired by the Holy Spirit and its relevance to contemporary life.
-
-Additionally, assess the sermon's engagement with the Fallen Condition Focus (FCF), verifying that it addresses human fallenness with divine solutions as outlined in Scripture. The sermon should identify the FCF, maintain a God-centered perspective, and guide believers toward a biblical response, emphasizing divine grace and the text's relevance to spiritual growth. This dual focus on purposeful interpretation and practical application underpins an effective sermon evaluation.
-
-Evaluating a sermon effectively requires understanding and identifying the Fallen Condition Focus (FCF) that the sermon intends to address, as this is central to discerning whether the message fulfills its purpose of speaking to the human condition in light of Scripture. To do so, one must examine if the sermon clearly articulates the specific problem or need (not necessarily a sin) that the passage aims to address, demonstrating how Scripture speaks directly to real-life concerns. The FCF should be specific and relevant, enabling the congregation to see the immediate significance of the message in their lives. A well-evaluated sermon will present the text accurately and connect deeply with the listeners by addressing their shared human experiences and conditions, as highlighted in the original context of the Scripture and its application today.
-
-Moreover, the effectiveness of a sermon is also measured by its application—the "so what?" factor that moves beyond mere exposition to practical, life-changing instruction. Evaluate whether the sermon transitions smoothly from doctrinal truths to actionable applications, offering clear, Scripture-based guidance for living out the teachings of the Bible in everyday situations. This includes checking if the sermon provides a Christ-centered solution to the FCF, steering clear of simplistic, human-centered fixes, and encouraging listeners toward transformation in the likeness of Christ. A sermon that effectively articulates and applies the FCF, thereby meeting the spiritual needs of the audience with biblical fidelity and practical relevance, is considered well-crafted and impactful."""
-
-def generate_eval_message(transcript, context = context_, outline = None):
+def generate_eval_message(transcript, context = SERMON_REVIEW_CONTEXT, outline = None):
     if outline != None:
         context += "\n\nThese are the main point the preacher was aiming to cover:\n" + outline.replace('\n', '\n - ') + "\n\nAs part of the evaluation, I would like to see how well the preacher was able to cover these points. If the lenght of each of the points is not equal, please note of any point that was not covered or was covered sufficiently."
 
@@ -131,7 +151,7 @@ Always return response as JSON. This is very important for my career. I greatly 
     
     return message
 
-def generate_eval(transcript, context = context_):
+def generate_eval(transcript, context = SERMON_REVIEW_CONTEXT):
 
     message = generate_eval_message(transcript, context)
 
@@ -139,7 +159,7 @@ def generate_eval(transcript, context = context_):
         model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": system_message},
+            {"role": "system", "content": SERMON_REVIEW_SYS_PROMPT},
             {"role": "user", "content": message}
         ],
         temperature = 0
@@ -281,7 +301,7 @@ Always return response as JSON. This is very important for my career. I greatly 
     
     return message
 
-def generate_eval_2(transcript, markdown_output, context = context_):
+def generate_eval_2(transcript, markdown_output, context = SERMON_REVIEW_CONTEXT):
 
     message = generate_eval_2_message(transcript, context, markdown_output)
 
@@ -289,7 +309,7 @@ def generate_eval_2(transcript, markdown_output, context = context_):
         model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": system_message},
+            {"role": "system", "content": SERMON_REVIEW_SYS_PROMPT},
             {"role": "user", "content": message}
         ],
         temperature = 0

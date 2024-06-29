@@ -7,7 +7,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from llama_index import ServiceContext
 
-from ai_parrot.ccelTools import toolkit
+from parrot_ai.ccelTools import toolkit
 from CustomConversationalChatAgent import ConversationalChatAgent
 
 load_dotenv()
