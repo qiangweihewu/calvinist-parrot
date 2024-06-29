@@ -6,6 +6,7 @@ from datetime import datetime as dt
 import pytz
 import os, requests
 from parrot_toolkit.sql_models import Devotionals
+from parrot_ai.core.prompts import DEVOTIONAL_SYS_PROMPT
 
 import pandas as pd
 
@@ -83,7 +84,7 @@ def fech_news():
 
     return articles, "\n - ".join(links)
 
-system_message = "You are a member of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, you have adopted the 1689 London Baptist Confession of Faith that expresses your understanding of the Bible's vision for the church to promote clarity and transparency. You write devotionals for other reformed believers to encourage them to grow in their faith."
+
 
 
 def generate_message(devotional_type, now, latest_news):
@@ -124,7 +125,7 @@ def generate_devotional():
         model=gpt_model,
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": system_message},
+            {"role": "system", "content": DEVOTIONAL_SYS_PROMPT},
             {"role": "user", "content": message}
         ],
         temperature = 0

@@ -1,9 +1,40 @@
+import streamlit as st
+from parrot_toolkit.sql_models import BibleStudies, SessionLocal
+from parrot_ai.core.prompts import STUDY_GEN_SYS_PROMPT, CALVIN_SYS_PROMPT
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
-
 gpt_model = os.environ.get("GPT_MODEL")
+
+def save_study_to_db(user_id, title, bible_verse, topic, audience, bible_study_text):
+    db = SessionLocal()
+    new_study = BibleStudies(
+        user_id=user_id,
+        title=title,
+        bible_verse=bible_verse,
+        topic=topic,
+        audience=audience,
+        bible_study_text=bible_study_text
+    )
+    db.add(new_study)
+    db.commit()
+    db.close()
+
+def get_studies(user_id):
+    db = SessionLocal()
+    try:
+        studies = db.query(BibleStudies).filter(
+            BibleStudies.user_id == user_id
+        ).order_by(BibleStudies.timestamp.desc()).all()
+        db.close()
+    except Exception as e:
+        st.sidebar.error(f"An unexpected error occurred while loading the previous reviews: {e}")
+        studies = []
+    finally:
+        db.close()
+        
+    return studies
 
 from openai import OpenAI
 client = OpenAI()
@@ -38,7 +69,7 @@ def get_text(verse):
 
     return text_out, reference_out
 
-system_message_parrot = "You are a Pastor of the Silicon Valley Reformed Baptist Church. You believe the Bible has the ultimate authority to determine what people believe and do. Many affirm this Bible and arrive at different conclusions about its teachings. In light of this reality, you have adopted the 1689 London Baptist Confession of Faith that expresses your understanding of the Bible's vision for the church to promote clarity and transparency. You are committed to teaching the Bible and its doctrines in an easy an approchable way that can build up the church."
+
 
 def generate_first_message(passage, reference, desired_topic, audience):
     message = f"""You are writing a Bible study for your congregation. Please write a 500-word Bible study on the topic of "{desired_topic}" for "{audience}". The passage you will be focusing on is:
@@ -65,14 +96,14 @@ def generate_draft(passage, reference, desired_topic, audience):
     response = client.chat.completions.create(
         model=gpt_model,
         messages=[
-            {"role": "system", "content": system_message_parrot},
+            {"role": "system", "content": STUDY_GEN_SYS_PROMPT},
             {"role": "user", "content": message}
         ],
         temperature = 0
     )
     return response.choices[0].message.content
 
-calvin_sys_message = """You are John Calvin, the author of the Institutes of the Christian Religion, your magnum opus, which is extremely important for the Protestant Reformation. The book has remained crucial for Protestant theology for almost five centuries. You are a French theologian, pastor, and reformer in Geneva during the Protestant Reformation. You are a principal figure in the development of the system of Christian theology later called Calvinism. You are known for your teachings and writings, particularly in the areas of predestination and the sovereignty of God in salvation. You are committed to the authority of the Bible and the sovereignty of God in all areas of life. You are known for your emphasis on the sovereignty of God, the authority of Scripture, and the depravity of man. You are here to ensure that the Bible study is theologically sound and faithful to the Scriptures."""
+calvin_sys_message = f"""{CALVIN_SYS_PROMPT} You are here to ensure that the Bible study is theologically sound and faithful to the Scriptures."""
 
 def generate_review_message(draft, reference, desired_topic, audience):
     message = f"""You are reviewing a Bible study written by a Pastor of the Silicon Valley Reformed Baptist Church. The study is on the topic of "{desired_topic}" for "{audience}". The passage focused on is {reference}. Please provide a detailed review of the Bible study, ensuring that it is theologically sound and faithful to the Scriptures. Your review should offer constructive feedback on the study's interpretation, application, and overall effectiveness in communicating the message of the Bible for {audience}. Here is the Bible study for your review:
@@ -104,12 +135,12 @@ def generate_final_study(passage, reference, desired_topic, audience, draft, rev
 
     og_message = generate_first_message(passage, reference, desired_topic, audience)
 
-    new_message = f"Thank you creating the draft. {review}.\n\nPlease use this feedback to revise your Bible study. Remember to share the gospel, in case there are listeners that aren't Christians. I greatly value your thorough analysis."
+    new_message = f"Thank you for creating the draft. {review}.\n\nPlease use this feedback to revise your Bible study. Remember to share the gospel, in case there are listeners that aren't Christians. I greatly value your thorough analysis."
 
     response = client.chat.completions.create(
         model=gpt_model,
         messages=[
-            {"role": "system", "content": system_message_parrot},
+            {"role": "system", "content": STUDY_GEN_SYS_PROMPT},
             {"role": "user", "content": og_message},
             {"role": "system", "content": draft},
             {"role": "user", "content": new_message}

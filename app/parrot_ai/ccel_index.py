@@ -7,7 +7,8 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import Settings
 
 from llama_index.core import VectorStoreIndex, StorageContext
-from ai_parrot.cutomPGVectorStore import PGVectorStore
+from parrot_ai.cutomPGVectorStore import PGVectorStore
+from parrot_ai.core.prompts import CCEL_CHAT_SYS_PROMPT
 
 import os
 
@@ -24,14 +25,17 @@ llm = OpenAI(
 Settings.llm = llm
 Settings.embed_model = OpenAIEmbedding(model='text-embedding-3-small')
 
+vector_store = PGVectorStore.from_params(
+    table_name="ccel_vector_store"
+)
 
-def ccel_query_index():    
-    vector_store = PGVectorStore.from_params(
-        table_name="ccel_vector_store"
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+ccel_index = VectorStoreIndex([], storage_context=storage_context)
+
+def ccel_chat_engine():
+    return ccel_index.as_chat_engine(
+        chat_mode="react",
+        similarity_top_k=5,
+        system_prompt=CCEL_CHAT_SYS_PROMPT,
     )
-
-    storage_context = StorageContext.from_defaults(vector_store=vector_store)
-
-    ccel_index = VectorStoreIndex([], storage_context=storage_context)
-
-    return ccel_index.as_query_engine()
