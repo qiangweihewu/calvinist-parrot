@@ -25,8 +25,8 @@ def load_conversation_history(user_id):
     if len(conversations) == 0:
         st.sidebar.write("No conversations yet. I'm looking forward to chatting with you!")
     else:
-        for conversation in conversations:
-            if st.sidebar.button(conversation.conversation_name):
+        for idx, conversation in enumerate(conversations):
+            if st.sidebar.button(conversation.conversation_name, key=f"conversation_button_{idx}"):
                 # Load the selected conversation into st.session_state['messages']
                 st.session_state['parrot_messages'] = conversation.messages
                 load_selected_conversation()

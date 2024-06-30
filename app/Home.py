@@ -61,6 +61,7 @@ def homepage():
 home = st.Page(homepage, title="Calvinist Parrot v2.5", icon="🦜")
 
 login_page = st.Page("directory/parrot_login.py", title="Log in", icon=":material/login:")
+register_page = st.Page("directory/parrot_register.py", title="Register", icon=":material/assignment_ind:")
 logout_page = st.Page(auth.logout, title="Log out", icon=":material/logout:")
 
 v2_parrot = st.Page("directory/Parrot.py", title="Calvinist Parrot", icon="🦜")
@@ -84,7 +85,7 @@ if st.session_state['logged_in']:
 else:
     pg = st.navigation(
         {
-            "Main": [home, login_page],
+            "Main": [home, login_page, register_page],
             "Tools": [ccel_page, study_helper],
             "Other": [devotionals]
         }
