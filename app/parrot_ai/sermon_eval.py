@@ -2,8 +2,6 @@ import streamlit as st
 from parrot_toolkit.sql_models import SermonReview, SessionLocal
 from parrot_ai.core.prompts import SERMON_REVIEW_SYS_PROMPT, SERMON_REVIEW_CONTEXT
 from dotenv import load_dotenv
-from pytube import YouTube
-from pydub import AudioSegment
 import streamlit as st
 import os
 
@@ -42,65 +40,6 @@ def get_reviews(user_id):
 
 from openai import OpenAI
 client = OpenAI()
-
-def split_audio(file_path):
-    # Load the audio file
-    audio = AudioSegment.from_file(file_path)
-    
-    # Calculate the duration of each snippet (10 minutes)
-    snippet_duration = 10 * 60 * 1000
-    
-    # Calculate the number of snippets
-    num_snippets = len(audio) // snippet_duration
-    if len(audio) % snippet_duration != 0:
-        num_snippets += 1
-    
-    st.write(f"Audio duration: {len(audio)/60000:.2f} minutes")
-    st.write(f"Splitting into {num_snippets} snippets")
-    
-    # Split the audio into snippets
-    snippets = []
-    for i in range(num_snippets):
-        start_time = i * snippet_duration
-        end_time = min((i + 1) * snippet_duration, len(audio))
-        snippet = audio[start_time:end_time]
-        snippet_file = file_path.replace('.mp3', f'_part{i+1}.mp3')
-        snippet.export(snippet_file, format='mp3')
-        snippets.append(snippet_file)
-    
-    return snippets
-
-def download_audio_pytube(youtube_url, sermon_name, output_format='mp3', output_path='.'):
-    yt = YouTube(youtube_url)
-    audio_stream = yt.streams.get_audio_only()
-    file_path = f"audio_{sermon_name.lower().replace(' ', '_')}.{output_format}"
-    audio_stream.download(output_path=output_path, filename=file_path)
-    snippets = split_audio(file_path)
-    
-    return snippets
-
-# parts = download_audio_pytube('https://www.youtube.com/watch?v=aJ_vpLZ0N2c', 'The Faithfulness Of The Son')
-
-def create_and_append_transcripts(file_paths, output_file):
-    output_file = 'transcript_' + output_file.lower().replace(' ', '_') + '.txt'
-    with open(output_file, 'a') as file:
-        for file_path in file_paths:
-            audio_file = open(file_path, "rb")
-            transcript = client.audio.transcriptions.create(
-                model="whisper-1",
-                file=audio_file
-            )
-            file.write(transcript.text + ' ')
-            audio_file.close()
-
-    with open(output_file, 'r') as file:
-        transcript = file.read()
-
-    st.write(f'Total length of transcript: {len(transcript.split())} words')
-    
-    return transcript
-
-# transcript = create_and_append_transcripts(parts, 'The Faithfulness Of The Son')
 
 def generate_eval_message(transcript, context = SERMON_REVIEW_CONTEXT, outline = None):
     if outline != None:
@@ -314,16 +253,16 @@ def generate_eval_2(transcript, markdown_output, context = SERMON_REVIEW_CONTEXT
         ],
         temperature = 0
     )
-    first_eval = response.choices[0].message.content
+    second_eval = response.choices[0].message.content
     try:
-        first_eval = eval(first_eval)
+        second_eval = eval(second_eval)
         success = True
     except:
         success = False
     
     if success:
         print('Second evaluation generated successfully')
-        return first_eval
+        return second_eval
     else:
         print('Error generating second evaluation')
         return None
@@ -392,4 +331,4 @@ def convert_to_markdown_v2(sermon_scores, first_eval_markdown):
     return first_eval_markdown + markdown_report
 
 # Convert the dictionary to markdown format
-# markdown_report_v2 = convert_to_markdown_v2(second_eval)
+# markdown_report_v2 = convert_to_markdown_v2(second_eval, markdown_output)

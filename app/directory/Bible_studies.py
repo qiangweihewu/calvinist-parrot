@@ -21,8 +21,8 @@ def load_previous_studies(user_id):
     if len(studies) == 0:
         st.sidebar.write("You don't have any studies yet.")
     else:
-        for study in studies:
-            if st.sidebar.button(study.title):
+        for idx, study in enumerate(studies):
+            if st.sidebar.button(study.title, key=f"study_button_{idx}"):
                 st.session_state['title'] = study.title
                 st.session_state['bible_verse'] = study.bible_verse
                 st.session_state['biblie_study'] = study.bible_study_text
