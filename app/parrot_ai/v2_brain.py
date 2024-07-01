@@ -4,6 +4,7 @@ from PIL import Image
 from parrot_toolkit.sql_models import ConversationHistory
 from parrot_ai.core.prompts import PARROT_SYS_PROMPT, CALVIN_SYS_PROMPT_CHAT
 from parrot_ai import chat_functions
+from parrot_ai import ccel_index as ccel
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -19,6 +20,9 @@ def update_status(msg):
     if msg['role'] == "parrot":
         st.session_state["parrot_conversation_history"].append({"role": "assistant", "content": msg["content"]}) 
         st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/parrot/ {msg["content"]}'}) # If parrot is speaking, we need to tell Calvin that "user" is in reality another agent
+    elif msg['role'] == "librarian":
+        st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/librarian/ {msg["content"]}'})
+        st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/librarian/ {msg["content"]}'})
     else:
         st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/calvin/ {msg["content"]}'}) # If Calvin is speaking, we need to tell Parrot that "user" is in reality another agent
         st.session_state["calvin_conversation_history"].append({"role": "assistant", "content": msg["content"]})
@@ -33,6 +37,9 @@ def load_selected_conversation():
         elif msg["role"] == "calvin":
             st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/calvin/ {msg["content"]}'})
             st.session_state["calvin_conversation_history"].append({"role": "assistant", "content": msg["content"]})
+        elif msg['role'] == "librarian":
+            st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'/librarian/ {msg["content"]}'})
+            st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'/librarian/ {msg["content"]}'})
         else:
             st.session_state["parrot_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]}'})
             st.session_state["calvin_conversation_history"].append({"role": "user", "content": f'{st.session_state["human"]} {msg["content"]}'})
@@ -71,6 +78,18 @@ def interactWithAgents(question):
     # Add the response to the conversation history
     update_status({"role": "calvin", "content": answer})
 
+    # Get response from the Librarian
+    librarian_message = ccel.generate_query_4_ccel_agent(st.session_state["parrot_messages"])
+    with st.spinner("Consulting the Librarian..."):
+        librarian_response = st.session_state["ccel_agent"].query(librarian_message)
+
+    st.chat_message("CCEL Librarian", avatar="👨‍🏫").write(librarian_response.response)
+    with st.expander(f"📚 **Counsulted Sources**"):
+        consulted_sources = ccel.parse_source_nodes(librarian_response.source_nodes)
+        ccel.display_consulted_sources(consulted_sources)
+
+    update_status({"role": "librarian", "content": librarian_response.response, "consulted_sources": consulted_sources})
+
     # Get the response from the Parrot
     with st.chat_message("parrot", avatar=parrot):
         answer = ''
@@ -108,4 +127,5 @@ def reset_status():
     st.session_state["parrot_messages"] = [{"role": "parrot", "content": "What theological questions do you have?"}] # What the user sees in the UI
     st.session_state["parrot_conversation_history"] = [{"role": "system", "content": PARROT_SYS_PROMPT}] # What is send to the Parrot
     st.session_state["calvin_conversation_history"] = [{"role": "system", "content": CALVIN_SYS_PROMPT_CHAT}] # What is send to Calvin
+    st.session_state["ccel_agent"] = ccel.create_ccel_agent() # Erase the CCEL agent state
     st.rerun()

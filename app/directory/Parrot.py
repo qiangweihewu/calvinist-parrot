@@ -3,6 +3,7 @@ import parrot_toolkit.parrot_auth as auth
 from parrot_toolkit.sql_models import ConversationHistory
 from parrot_ai import chat_functions
 from parrot_ai.v2_brain import interactWithAgents, load_selected_conversation, reset_status
+from parrot_ai.ccel_index import display_consulted_sources
 from PIL import Image
 
 from dotenv import load_dotenv
@@ -42,11 +43,6 @@ if st.session_state['logged_in']:
     st.sidebar.subheader("Chat History")
     with st.container():
         load_conversation_history(st.session_state['user_id'])
-    st.sidebar.divider()
-    if st.sidebar.button('Logout'):
-        auth.logout()
-        reset_status()
-        st.rerun()
 else:
     st.sidebar.write(f"Please log in to see your chat history.")
 
@@ -61,9 +57,14 @@ if st.session_state['logged_in']:
             avatar = parrot
         elif msg["role"] == "calvin":
             avatar = calvin
+        elif msg["role"] == "librarian":
+            avatar = "👨‍🏫"
         else:
             avatar = "🧑‍💻"
         st.chat_message(msg["role"], avatar=avatar).write(msg["content"])
+        if "consulted_sources" in msg.keys():
+            with st.expander(f"📚 **Counsulted Sources**"):
+                display_consulted_sources(msg["consulted_sources"])
 
     if prompt := st.chat_input(placeholder="What is predestination?"):
         st.chat_message("user", avatar="🧑‍💻").write(prompt)

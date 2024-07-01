@@ -38,7 +38,7 @@ def homepage():
     st.write("""\
              Explore the tools available on the left menu:
 
-- **Calvinist Parrot**: Engage in discussions and questions from a Reformed perspective on the Bible.
+- **Calvinist Parrot**: Engage in discussions and questions from a Reformed perspective on the Bible. Parrot, Calvin, and a CCEL Librarian are here to help you learn and grow in your understanding of Scripture.
 - **CCEL**: Dive into the treasures of the [Christian Classics Ethereal Library](https://ccel.org) for timeless Christian writings.
 - **Study Helper**: Access commentaries from [Bible Hub](https://biblehub.com/commentaries) to enrich your study of Scripture.
 - **Devotionals**: Start or end your day with AI-generated morning and evening reflections for comfort and inspiration.
@@ -58,7 +58,7 @@ def homepage():
     st.markdown("I'm still learning, so please be patient with me! I'm always looking to improve, so if you have any feedback, <a href='mailto:jesus@jgmancilla.com'>please let me know</a> \n\nI'm also open source, so if you're interested in contributing to my development, check out my [GitHub](https://github.com/Jegama/calvinist-parrot)", unsafe_allow_html=True)
 
 
-home = st.Page(homepage, title="Calvinist Parrot v2.5", icon="🦜")
+home = st.Page(homepage, title="Calvinist Parrot v2.6", icon="🦜")
 
 login_page = st.Page("directory/parrot_login.py", title="Log in", icon=":material/login:")
 register_page = st.Page("directory/parrot_register.py", title="Register", icon=":material/assignment_ind:")
