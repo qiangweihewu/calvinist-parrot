@@ -18,7 +18,11 @@ For the Google Application Credentials, please connect with me so I can create y
 
 In the app folder, run the following command to run the tests.
 
+Windows:
     .\test_parrot.bat
+
+Mac:
+   bash test_parrot.sh
 
 ## Contributing to the Project
 
