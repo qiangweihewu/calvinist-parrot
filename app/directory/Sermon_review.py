@@ -12,17 +12,9 @@ if "logged_in" not in st.session_state:
     auth.check_login()
 
 # Setting up the session state
-if "review" not in st.session_state:
-    st.session_state['review'] = ""
-
-if "sermon_title" not in st.session_state:
-    st.session_state['sermon_title'] = ""
-
-if "sermon_preacher" not in st.session_state:
-    st.session_state['sermon_preacher'] = ""
-
-if "sermon_text" not in st.session_state:
-    st.session_state['sermon_text'] = ""
+for key in ['sermon_title', 'sermon_preacher', 'sermon_text', 'review']:
+    if key not in st.session_state:
+        st.session_state[key] = ""
 
 if "page" not in st.session_state:
     st.session_state['page'] = 'Sermon Review'

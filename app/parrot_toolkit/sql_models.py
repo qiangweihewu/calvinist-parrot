@@ -25,9 +25,11 @@ class User(Base):
     __tablename__ = 'parrot_users'
     user_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     username = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    language = Column(String)
     conversations = relationship("ConversationHistory", back_populates="user")
+    ccel_conversations = relationship("CCELConversationHistory", back_populates="user")
     study_helper = relationship("StudyHelper", back_populates="user")
     sermon_review = relationship("SermonReview", back_populates="user")
     bible_studies = relationship("BibleStudies", back_populates="user")
@@ -70,9 +72,22 @@ class ConversationHistory(Base):
     user_id = Column(String, ForeignKey('parrot_users.user_id'))
     conversation_name = Column(String, nullable=False)
     messages = Column(postgresql.JSONB, nullable=False)
+    modified = Column(DateTime)
+    created = Column(DateTime)
     timestamp = Column(DateTime, default=dt.now(datetime.UTC))
 
     user = relationship("User", back_populates="conversations")
+
+class CCELConversationHistory(Base):
+    __tablename__ = 'ccel_conversation_history'
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey('parrot_users.user_id'))
+    conversation_name = Column(String, nullable=False)
+    messages = Column(postgresql.JSONB, nullable=False)
+    modified = Column(DateTime)
+    created = Column(DateTime)
+
+    user = relationship("User", back_populates="ccel_conversations")
 
 class StudyHelper(Base):
     __tablename__ = 'study_helper'
