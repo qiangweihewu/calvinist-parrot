@@ -61,11 +61,12 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
 ccel_index = VectorStoreIndex([], storage_context=storage_context)
 
-def ccel_chat_engine():
+def ccel_chat_engine(parrot_history = []):
     return ccel_index.as_chat_engine(
         chat_mode="react",
         similarity_top_k=5,
         system_prompt=CCEL_CHAT_SYS_PROMPT,
+        chat_history=parrot_history,
     )
 
 def generate_query_4_ccel_agent(current_conversation):
@@ -75,7 +76,7 @@ def generate_query_4_ccel_agent(current_conversation):
 {current_conversation}
 ---------------------
 
-Based on it, what follow up information do you think is relevant for the user to know? Please explain in simple words the key topics and give book recommendation based on what you found in the CCEL."""
+Based on it, what follow up information do you think is relevant for the user to know? Please explain in simple words the key topics based on what you found in the CCEL."""
     
     return ccel_agent_prompt
 
