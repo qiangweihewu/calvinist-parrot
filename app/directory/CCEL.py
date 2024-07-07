@@ -65,4 +65,4 @@ if prompt := st.chat_input(placeholder="What is predestination?"):
     with st.expander(f"📚 **Counsulted Sources**"):
         consulted_sources = ccel.parse_source_nodes(response.source_nodes)
         ccel.display_consulted_sources(consulted_sources)
-    st.session_state.messages.append({"role": "assistant", "avatar": parrot_icon, "content": response.response, "consulted_sources": consulted_sources})
+    st.session_state["ccel_messages"].append({"role": "assistant", "avatar": parrot_icon, "content": response.response, "consulted_sources": consulted_sources})
