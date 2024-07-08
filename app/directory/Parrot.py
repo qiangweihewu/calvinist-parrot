@@ -16,16 +16,33 @@ calvin = Image.open("app/calvin.ico")
 if "logged_in" not in st.session_state:
     auth.check_login()
 
+# Check if the user is logged in
+if "logged_in" not in st.session_state:
+    auth.check_login()
+
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+else:
+    from parrot_toolkit.english_text import *
+
 # Setting up the session state
 if "page" not in st.session_state:
-    st.session_state["page"] = "v2 Parrot"
+    st.session_state["page"] = pages[0]
 
-if st.session_state.page != "v2 Parrot":
-    st.session_state["page"] = "v2 Parrot"
+if st.session_state["page"] != pages[0]:
+    st.session_state["page"] = pages[0]
     reset_status()
 
 # Sidebar
-clear_button = st.sidebar.button("New Conversation")
+clear_button = st.sidebar.button(CLEAR_CHAT)
 st.sidebar.divider()
 
 if clear_button:
@@ -36,8 +53,8 @@ if "parrot_messages" not in st.session_state:
     reset_status()
 
 if st.session_state['logged_in']:
-    st.sidebar.write(f"Logged in as {st.session_state['username']}")
-    st.sidebar.subheader("Chat History")
+    st.sidebar.write(f"{LOGGED_AS} {st.session_state['username']}")
+    st.sidebar.subheader(CHAT_HIST)
     with st.container():
         chat_functions.load_conversation_history(
             ConversationHistory, 
@@ -45,11 +62,10 @@ if st.session_state['logged_in']:
             'parrot_messages'
         )
 else:
-    st.sidebar.write(f"Please log in to see your chat history.")
+    st.sidebar.write(NOT_LOGGED)
 
 # Main content
 if st.session_state['logged_in']:
-    st.write(f"You are logged in as {st.session_state['username']}.")
     for msg in st.session_state["parrot_messages"]:
         if msg["role"] == "parrot":
             avatar = parrot
@@ -61,15 +77,14 @@ if st.session_state['logged_in']:
             avatar = "🧑‍💻"
         st.chat_message(msg["role"], avatar=avatar).write(msg["content"])
         if "consulted_sources" in msg.keys():
-            with st.expander(f"📚 **Counsulted Sources**"):
+            with st.expander(CONSULTED_SOURCES):
                 display_consulted_sources(msg["consulted_sources"])
 
-    if prompt := st.chat_input(placeholder="What is predestination?"):
+    if prompt := st.chat_input(placeholder=CHAT_PLACESHOLDER):
         st.chat_message("user", avatar="🧑‍💻").write(prompt)
         st.session_state["parrot_messages"].append(
             {"role": "user", "avatar": "🧑‍💻", "content": prompt}
         )
         interactWithAgents(prompt)
 else:
-    st.warning("Please log in to start a conversation.")
-    st.write("Please use the sidebar to log in or register.")
+    st.write(CHAT_NOT_LOGGED)

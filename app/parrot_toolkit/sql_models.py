@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, ForeignKey, Text, DateTime
-from sqlalchemy.orm import relationship,declarative_base
+from sqlalchemy.orm import relationship, declarative_base
 import sqlalchemy.dialects.postgresql as postgresql
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime as dt

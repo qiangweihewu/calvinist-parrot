@@ -1,16 +1,30 @@
 import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 
-st.title("Welcome to the Calvinist Parrot!")
-st.write("To take full advantage of the Calvinist Parrot, please create an account, you can register for free.")
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
 
-username = st.text_input("Username", key='username_register', placeholder='This will be your login name.')
-name = st.text_input("Name", placeholder="John Doe", key='name_register', help='The parrot will use this name to refer to you.')
-password = st.text_input("Password", type='password', key='password_register', help='Please use a strong password.')
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+else:
+    from parrot_toolkit.english_text import *
 
-if st.button("Register"):
-    new_user = auth.create_user(username, password, name)
+st.title(HOME_TITLE)
+st.write(REGISTER_WELCOME)
+
+username = st.text_input(LOGIN_USERNAME, key='username_register', placeholder=REGISTER_USERNAME_PLACEHOLDER)
+name = st.text_input(REGISTER_NAME, placeholder=REGISTER_NAME_PLACEHOLDER, key='name_register', help=REGISTER_NAME_HELP)
+password = st.text_input(LOGIN_PASSWORD, type='password', key='password_register', help=REGISTER_PASSWORD_HELP)
+language = st.selectbox(REGISTER_LANGUAGE, languages, key='language_register')
+
+if st.button(REGISTER_BUTTON):
+    new_user = auth.create_user(username, password, name, language)
     if new_user:
         auth.user_verification(username, password)
     else:
-        st.warning("Failed to create user.")
+        st.warning(ERROR_CREATE_USER)

@@ -35,10 +35,10 @@ def get_user(username):
         return None
 
 # Create a new user
-def create_user(username, password, name):
+def create_user(username, password, name, language):
     db = SessionLocal()
     try:
-        user = sql.User(username=username, name=name)
+        user = sql.User(username=username, name=name, language=language)
         user.set_password(password)  # Hash the password using the method in the User model
         db.add(user)
         db.commit()
@@ -52,7 +52,7 @@ def create_user(username, password, name):
     except Exception as e:
         db.close()
         st.error(f"An unexpected error occurred while creating the user: {e}")
-        return None    
+        return None
 
 # Authenticate the user
 def authenticate_user(username, password):
@@ -74,6 +74,7 @@ def check_login():
             st.session_state['username'] = user.username
             st.session_state['user_id'] = user.user_id
             st.session_state['human'] = user.name + ' - '
+            st.session_state['language'] = user.language
         else:
             st.session_state['logged_in'] = False
             st.session_state['human'] = '/human/'

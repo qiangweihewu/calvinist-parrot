@@ -9,6 +9,20 @@ load_dotenv()
 
 gpt_model = os.environ.get("GPT_MODEL")
 
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+    spanish_response = "This user speaks Spanish. Please respond in Spanish."
+else:
+    from parrot_toolkit.english_text import *
+    spanish_response = ""
 
 def save_review_to_db(user_id, sermon_title, preacher, transcript, review):
     db = SessionLocal()
@@ -86,7 +100,7 @@ Please output a response as JSON with the following format:
     "confidence_score": float \\ A confidence score between 0-1 for your answer
 }}
 
-Always return response as JSON. This is very important for my career. I greatly value your thorough analysis."""
+Always return response as JSON. This is very important for my career. I greatly value your thorough analysis. {spanish_response}"""
     
     return message
 
@@ -236,7 +250,7 @@ Please output a response as JSON with the following format:
     "confidence_score": float \\ A confidence score between 0-1 for your answer
 }}
 
-Always return response as JSON. This is very important for my career. I greatly value your thorough analysis."""
+Always return response as JSON. This is very important for my career. I greatly value your thorough analysis. {spanish_response}"""
     
     return message
 
