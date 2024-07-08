@@ -14,6 +14,19 @@ import parrot_ai.ccel_index as ccel
 from dotenv import load_dotenv
 load_dotenv()
 
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+else:
+    from parrot_toolkit.english_text import *
+
 pool = gc.connect_with_connector('parrot_db')
 SessionLocal = sessionmaker(bind=pool)
 
@@ -73,7 +86,7 @@ What would you like to name this conversation? It can be a short name to remembe
 Please reply in the following JSON format:
 
 {{
-    "name": string \\ Name of the conversation
+    "name": string \\ Name of the conversation in {st.session_state['language']}
 }}
 
 Always return response as JSON."""
@@ -94,7 +107,7 @@ Always return response as JSON."""
         conversation_name = eval(conversation_name)['name']
         return conversation_name
     except:
-        return None
+        generate_conversation_name(current_conversation)
 
 # Create or update conversation history in the database
 def create_or_update_conversation(conversation_table, user_id, conversation_name, messages):
@@ -121,7 +134,7 @@ def create_or_update_conversation(conversation_table, user_id, conversation_name
             db.add(new_conversation)
         db.commit()
     except Exception as e:
-        st.error(f"Error updating or creating conversation: {e}")
+        st.error(f"{ERROR_CREATING_CONVERSATION}: {e}")
     finally:
         db.close()
 
@@ -130,9 +143,9 @@ def get_conversation_history(conversation_table, user_id):
     try:
         conversations = db.query(conversation_table).filter(
             conversation_table.user_id == user_id
-        ).order_by(conversation_table.timestamp.desc()).all()
+        ).order_by(conversation_table.modified.desc()).all()
     except Exception as e:
-        st.error(f"Error getting conversation history: {e}")
+        st.error(f"{ERROR_GETTING_HISTORY}: {e}")
     finally:
         db.close()
     return conversations
@@ -142,7 +155,7 @@ def load_conversation_history(conversation_table, user_id, messages_id):
     conversations = get_conversation_history(conversation_table, user_id)
     
     if len(conversations) == 0:
-        st.sidebar.write("No conversations yet. I'm looking forward to chatting with you!")
+        st.sidebar.write(NO_HIST)
     else:
         for idx, conversation in enumerate(conversations):
             if st.sidebar.button(conversation.conversation_name, key=f"conversation_button_{idx}"):
@@ -152,6 +165,9 @@ def load_conversation_history(conversation_table, user_id, messages_id):
                     v2_brain.load_selected_conversation()
                 else:
                     load_conversation(messages_id)
+                if messages_id == 'ccel_messages':
+                    chat_engine_chat_history = parse_parrot_messages(st.session_state[messages_id])
+                    st.session_state["ccel_engine"] = ccel.ccel_chat_engine(chat_engine_chat_history)
                 st.session_state['new_conversation'] = False
                 st.session_state['conversation_name'] = conversation.conversation_name
                 st.rerun()
@@ -161,5 +177,5 @@ def load_conversation(messages_id):
         avatar_ = "🧑‍💻" if msg["role"] == "user" else parrot_icon
         st.chat_message(msg["role"], avatar=avatar_).write(msg["content"])
         if "consulted_sources" in msg.keys():
-            with st.expander(f"📚 **Counsulted Sources**"):
+            with st.expander(CONSULTED_SOURCES):
                 ccel.display_consulted_sources(msg["consulted_sources"])

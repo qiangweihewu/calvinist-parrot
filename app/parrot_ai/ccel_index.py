@@ -16,6 +16,21 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+    spanish_response = "This user speaks Spanish. Please respond in Spanish."
+else:
+    from parrot_toolkit.english_text import *
+    spanish_response = ""
+
 def parse_source_nodes(source_nodes):
     consulted_sources = {}
     for source in source_nodes:
@@ -70,13 +85,13 @@ def ccel_chat_engine(parrot_history = []):
     )
 
 def generate_query_4_ccel_agent(current_conversation):
-    ccel_agent_prompt = f"""I'm have this conversation:
+    ccel_agent_prompt = f"""I'm having this conversation:
 
 ---------------------
 {current_conversation}
 ---------------------
 
-Based on it, what follow up information do you think is relevant for the user to know? Please explain in simple words the key topics based on what you found in the CCEL."""
+Based on it, what follow up information do you think is relevant for the user to know? Please explain in simple words the key topics based on what you found in the CCEL. {spanish_response}"""
     
     return ccel_agent_prompt
 

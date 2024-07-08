@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String, create_engine, Text
+from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import pythonbible as bible
 from bs4 import BeautifulSoup
-import os, requests, llama_index
+import os, requests
 import pandas as pd
 
 bsb = pd.read_csv('app/bsb.tsv', sep='\t')

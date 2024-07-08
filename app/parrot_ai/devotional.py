@@ -1,3 +1,4 @@
+import streamlit as st
 from dotenv import load_dotenv
 from serpapi import GoogleSearch
 import pythonbible as bible
@@ -88,7 +89,7 @@ def fech_news():
 
 
 def generate_message(devotional_type, now, latest_news):
-    message = f"""You are writing a {devotional_type} devotional for {now.strftime('%A, %B %d, %Y')}.
+    message = f"""You are writing a {devotional_type} devotional for {now.strftime('%A, %B %d, %Y')} in {st.session_state['language']}
 
 Here are snippets of the latest news:
 
@@ -106,7 +107,7 @@ Please output a response as JSON with the following format:
     "devotional": string \\ The devotional text, in the style of Charles Spurgeon's Morning and Evening Devotionals
 }}
 
-If it's a morning devotional, focus on encouraging people on growing on their faith, if it's an evening devotional, focus on conforting people on their faith. Remember that you are writing for other reformed believers. They can either believe on the 1689 London Baptist Confession of Faith or the Westminster Confession of Faith. Write it in the style of Charles Spurgeon's Morning and Evening Devotionals. Always return response as JSON."""
+If it's a morning devotional, focus on encouraging people on growing on their faith, if it's an evening devotional, focus on conforting people on their faith. Remember that you are writing for other reformed believers. They can either believe on the 1689 London Baptist Confession of Faith or the Westminster Confession of Faith. Write it in the style of Charles Spurgeon's Morning and Evening Devotionals. Always return response as JSON. Please write the devotional in {st.session_state['language']}."""
     
     return message
 
@@ -117,7 +118,7 @@ def generate_devotional():
     articles, links = fech_news()
     latest_news = "\n\n---\n\n".join(articles)
     id = now.strftime("%Y_%m_%d")
-    id += f"_{devotional_type}_devotional"
+    id += f"_{devotional_type}_devotional_{st.session_state['language']}"
 
     message = generate_message(devotional_type, now, latest_news)
 

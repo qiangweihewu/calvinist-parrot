@@ -1,9 +1,22 @@
 import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 
-st.title("Welcome to the Calvinist Parrot!")
-st.write("To take full advantage of the Calvinist Parrot, please log in. If you don't have an account, you can register for free.")
-username = st.text_input("Username", key="username_login")
-password = st.text_input("Password", type='password', key="password_login")
-if st.button("Log in"):
+# Setting up the language
+if 'language' not in st.session_state:
+    if 'logged_in' not in st.session_state:
+        if 'loro' in str(st.session_state['url']):
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+else:
+    from parrot_toolkit.english_text import *
+
+st.title(HOME_TITLE)
+st.write(LOGIN_WELCOME)
+username = st.text_input(LOGIN_USERNAME, key="username_login")
+password = st.text_input(LOGIN_PASSWORD, type='password', key="password_login")
+if st.button(LOGIN_BUTTON):
     auth.user_verification(username, password)
