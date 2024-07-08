@@ -3,7 +3,7 @@ import parrot_toolkit.parrot_auth as auth
 
 # Setting up the language
 if 'language' not in st.session_state:
-    if 'logged_in' not in st.session_state:
+    if st.session_state['logged_in'] == False:
         if 'loro' in str(st.session_state['url']):
             st.session_state['language'] = 'Español'
         else:

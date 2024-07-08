@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_javascript import st_javascript
 import parrot_toolkit.parrot_auth as auth
 from PIL import Image
 from dotenv import load_dotenv
@@ -13,12 +12,12 @@ if "logged_in" not in st.session_state:
     auth.check_login()
 
 if 'url' not in st.session_state:
-    st.session_state['url'] = st_javascript("await fetch('').then(r => window.parent.location.href)")
+    st.session_state['url'] = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
     st.rerun()
 
 # Setting up the language
 if 'language' not in st.session_state:
-    if 'logged_in' not in st.session_state:
+    if st.session_state['logged_in'] == False:
         if 'loro' in str(st.session_state['url']):
             st.session_state['language'] = 'Español'
         else:
