@@ -7,6 +7,8 @@ import google_connector as gc
 from dotenv import load_dotenv
 load_dotenv()
 
+cookie_name = "parrot_cookie_token"
+
 # Cookie manager
 cookie_manager = NEW_CM()
 
@@ -59,32 +61,41 @@ def authenticate_user(username, password):
     user = get_user(username)
     if user and user.check_password(password):
         token = user.generate_auth_token()  # Generate a token
-        cookie_manager.set_cookie(token)
+        cookie_manager.set_cookie(token, f"parrot_cookie_token_{username}")
         return user  # Return the token instead of True
     else:
         return None
+    
+def reset_login_status():
+    st.session_state['logged_in'] = False
+    st.session_state['human'] = '/human/'
+    if 'language' in st.session_state:
+        st.session_state.pop('language')
+    st.session_state['cookie_name'] = ""
 
 # Check if the user is logged in
-def check_login():
-    if cookie_manager.get_cookie():
-        token = cookie_manager.get_cookie()
-        user = validate_session(token)
-        if user:
-            st.session_state['logged_in'] = True
-            st.session_state['username'] = user.username
-            st.session_state['user_id'] = user.user_id
-            st.session_state['human'] = user.name + ' - '
-            st.session_state['language'] = user.language
+def check_login(cookie_name):
+    if len(cookie_name) > 0:
+        if cookie_manager.get_cookie(cookie_name):
+            token = cookie_manager.get_cookie()
+            user = validate_session(token)
+            if user:
+                st.session_state['logged_in'] = True
+                st.session_state['username'] = user.username
+                st.session_state['user_id'] = user.user_id
+                st.session_state['human'] = user.name + ' - '
+                st.session_state['language'] = user.language
+            else:
+                reset_login_status()
         else:
-            st.session_state['logged_in'] = False
-            st.session_state['human'] = '/human/'
+            reset_login_status()
     else:
-        st.session_state['logged_in'] = False
-        st.session_state['human'] = '/human/'
+        reset_login_status()
+        
 
 def logout():
-    st.session_state['logged_in'] = False
-    cookie_manager.delete_cookie()
+    cookie_manager.delete_cookie(st.session_state['cookie_name'])
+    reset_login_status()
     st.rerun()
 
 # Verify new user setup
@@ -95,6 +106,8 @@ def user_verification(username, password):
         st.session_state['username'] = username
         st.session_state['user_id'] = verify_user.user_id
         st.session_state['human'] = verify_user.name + ' - '
+        st.session_state['language'] = verify_user.language
+        st.session_state['cookie_name'] = f"parrot_cookie_token_{username[:5].lower()}"
         st.success(f"Logged In as {username}")
         st.rerun()
     else:

@@ -7,9 +7,12 @@ load_dotenv()
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")
 
+if 'cookie_name' not in st.session_state:
+    st.session_state['cookie_name'] = ""
+
 # Check if the user is logged in
 if "logged_in" not in st.session_state:
-    auth.check_login()
+    auth.check_login(st.session_state['cookie_name'])
 
 if 'url' not in st.session_state:
     st.session_state['url'] = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host

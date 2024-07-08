@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 import streamlit as st
 from streamlit_cookies_manager import CookieManager
 
-cookie_name = "parrot_cookie_token"
-
 class NEW_CM:
     def __init__(self) -> None:
         self.cookie_manager = CookieManager()
@@ -12,21 +10,24 @@ class NEW_CM:
         if not self.cookie_manager.ready():
             st.stop()
 
-    def set_cookie(self, content):
+    def set_cookie(self, content, cookie_name):
+        # Clear existing cookie if any
+        self.delete_cookie(cookie_name)
+
         self.cookie_manager[cookie_name] = content
         self.cookie_manager.save()
 
-    def get_cookie(self):
+    def get_cookie(self, cookie_name):
         if cookie_name in self.cookie_manager:
             value = self.cookie_manager.get(cookie_name)
             return value
         else:
             return None
 
-    def delete_cookie(self):
-        value = None
-        if cookie_name in self.cookie_manager:
-            value = self.cookie_manager.pop(cookie_name)
+    def delete_cookie(self, cookie_name):
+        # Setting the cookie value to None and expiry to past date to force deletion
+        self.cookie_manager[cookie_name] = ""
+        self.cookie_manager._default_expiry = datetime.now() - timedelta(days=1)
 
 # cookie_manager = NEW_CM()
 

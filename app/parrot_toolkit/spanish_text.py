@@ -22,6 +22,7 @@ HOME_FOOTER = """\
 - Actualización de febrero de 2024: Debido a la falta de fondos, estoy depreciando el "Chat Principal" ya que el costo de mantener el índice de CCEL es demasiado alto. Lo siento por las molestias. Mantendré disponibles las herramientas de "Asistente de Estudio" y "Devocionales". También estoy trabajando en una nueva herramienta para ayudarte a estudiar la Biblia. ¡Mantente atento!
 - Actualización de marzo de 2024: ¡La nueva herramienta de revisión de sermones está disponible! Ahora puedes revisar sermones usando el marco de evaluación de Bryan Chappell de su libro, Predicación Centrada en Cristo.
 - Actualización de junio de 2024: ¡La herramienta de CCEL está de vuelta!
+- Actualización de julio de 2024: ¡Por favor, da la bienvenida a la versión en español del Loro Calvinista! [El Loro Calvinista](https://lorocalvinista.com/). La version original en inglés es [Calvinist Parrot](https://calvinistparrot.com/)
 
 Advertencia: La gestión de sesiones es un poco irregular. Estoy trabajando en ello. iOS no se lleva muy bien con las sesiones. Lo siento por las molestias.
 
