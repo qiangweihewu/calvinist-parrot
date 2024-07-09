@@ -1,25 +1,26 @@
 import streamlit as st
-from streamlit_javascript import st_javascript
 import parrot_toolkit.parrot_auth as auth
 from PIL import Image
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")
 
+if 'cookie_name' not in st.session_state:
+    st.session_state['cookie_name'] = ""
+
 # Check if the user is logged in
 if "logged_in" not in st.session_state:
-    auth.check_login()
+    auth.check_login(st.session_state['cookie_name'])
 
-if 'url' not in st.session_state:
-    st.session_state['url'] = st_javascript("await fetch('').then(r => window.parent.location.href)")
-    st.rerun()
+st.session_state['url'] = os.environ.get('URL')
 
 # Setting up the language
 if 'language' not in st.session_state:
-    if 'logged_in' not in st.session_state:
-        if 'loro' in str(st.session_state['url']):
+    if st.session_state['logged_in'] == False:
+        if st.session_state['url'] == 'loro':
             st.session_state['language'] = 'Español'
         else:
             st.session_state['language'] = 'English'

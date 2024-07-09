@@ -24,6 +24,7 @@ HOME_FOOTER = """\
 - Feb 2024 update: Due to lack of funding, I'm depricating the "Main Chat" since the cost to maintain the CCEL index is too high. I'm sorry for the inconvenience. I'll keep the "Study Helper" and "Devotionals" tools available. I'm also working on a new tool to help you study the Bible. Stay tuned!
 - Mar 2024 update: New sermon review tool is up! You can now review sermons using Bryan Chappell's evaluation framework from his book, Christ-Centered Preaching.
 - June 2024 update: The CCEL tool is back!
+- July 2024 update: Please welcome the Spanish version of the Calvinist Parrot! [El Loro Calvinista](https://lorocalvinista.com/)
 
 Fair warning: Session management is a bit wonky. I'm working on it. iOS doesn't play very well with sessions. I'm sorry for the inconvenience.
 

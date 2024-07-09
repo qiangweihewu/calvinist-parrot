@@ -12,6 +12,19 @@ load_dotenv()
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")
 
+# Setting up the language
+if 'language' not in st.session_state:
+    if st.session_state['logged_in'] == False:
+        if st.session_state['url'] == 'loro':
+            st.session_state['language'] = 'Español'
+        else:
+            st.session_state['language'] = 'English'
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    from parrot_toolkit.spanish_text import *
+else:
+    from parrot_toolkit.english_text import *
+
 # Update the status of the conversation
 # Make sure that whatever changes you do here, you do it in load_selected_conversation as well
 def update_status(msg):
@@ -124,7 +137,7 @@ def interactWithAgents(question):
 # Reset the status of the conversation
 def reset_status():
     st.session_state['new_conversation'] = True
-    st.session_state["parrot_messages"] = [{"role": "parrot", "content": "What theological questions do you have?"}] # What the user sees in the UI
+    st.session_state["parrot_messages"] = [{"role": "parrot", "content": CHAT_FIRST_MESSAGE}] # What the user sees in the UI
     st.session_state["parrot_conversation_history"] = [{"role": "system", "content": PARROT_SYS_PROMPT}] # What is send to the Parrot
     st.session_state["calvin_conversation_history"] = [{"role": "system", "content": CALVIN_SYS_PROMPT_CHAT}] # What is send to Calvin
     st.session_state["ccel_agent"] = ccel.create_ccel_agent() # Erase the CCEL agent state

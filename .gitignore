@@ -13,3 +13,4 @@ query_engines/
 *.mp3
 transcript_*
 eval_*
+deploy_*

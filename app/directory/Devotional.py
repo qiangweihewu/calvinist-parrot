@@ -12,8 +12,8 @@ now_ = dt.now(et)
 
 # Setting up the language
 if 'language' not in st.session_state:
-    if 'logged_in' not in st.session_state:
-        if 'loro' in str(st.session_state['url']):
+    if st.session_state['logged_in'] == False:
+        if st.session_state['url'] == 'loro':
             st.session_state['language'] = 'Español'
         else:
             st.session_state['language'] = 'English'
