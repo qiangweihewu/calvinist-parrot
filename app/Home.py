@@ -1,6 +1,7 @@
 import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 from PIL import Image
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,14 +15,12 @@ if 'cookie_name' not in st.session_state:
 if "logged_in" not in st.session_state:
     auth.check_login(st.session_state['cookie_name'])
 
-if 'url' not in st.session_state:
-    st.session_state['url'] = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
-    st.rerun()
+st.session_state['url'] = os.environ.get('URL')
 
 # Setting up the language
 if 'language' not in st.session_state:
     if st.session_state['logged_in'] == False:
-        if 'loro' in str(st.session_state['url']):
+        if st.session_state['url'] == 'loro':
             st.session_state['language'] = 'Español'
         else:
             st.session_state['language'] = 'English'

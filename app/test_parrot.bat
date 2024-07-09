@@ -1,5 +1,8 @@
-@REM # build docker image
+@REM set env variable for language
+set URL=loro
+
+@REM build docker image
 docker build -t streamlit_parrot .
 
-@REM # run docker image locally
+@REM run docker image locally
 docker run -p 8080:8080 streamlit_parrot
