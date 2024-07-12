@@ -58,15 +58,21 @@ study_helper = st.Page("directory/Study_Helper.py", title=pages[1], icon="📖")
 devotionals = st.Page("directory/Devotional.py", title=pages[2], icon="📜")
 sermon_review = st.Page("directory/Sermon_review.py", title=pages[3], icon="👨‍🏫")
 bible_studies = st.Page("directory/Bible_studies.py", title=pages[4], icon="✒️")
-nav_tools = [ccel_page, study_helper, sermon_review]
-nav_tools_extended = [ccel_page, study_helper, sermon_review, bible_studies]
+nav_tools_eng = [ccel_page, study_helper, sermon_review]
+nav_tools_esp = [ccel_page, study_helper]
+nav_tools_jegama = [ccel_page, study_helper, sermon_review, bible_studies]
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    nav_tools = nav_tools_esp
+else:
+    nav_tools = nav_tools_jegama if st.session_state['username'] == 'Jegama' else nav_tools_eng
 
 
 if st.session_state['logged_in']:
     pg = st.navigation(
         {
             "Main": [v2_parrot, devotionals],
-            "Tools": nav_tools_extended if st.session_state['username'] == 'Jegama' else nav_tools,
+            "Tools": nav_tools,
             "Account": [logout_page],
         }
     )

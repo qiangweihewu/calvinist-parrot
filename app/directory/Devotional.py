@@ -48,8 +48,11 @@ if st.session_state['language'] in ['Español', 'Spanish']:
     st.write(temp)
 else:
     st.write(f"{devotional_type.capitalize()} devotional")
-st.divider()
-st.write(dtk.get_text(st.session_state.devotional.bible_verse))
+if st.session_state['language'] in ['Español', 'Spanish']:
+    st.write(f"Versículo: {st.session_state.devotional.bible_verse}")
+else:
+    st.divider()
+    st.write(dtk.get_text(st.session_state.devotional.bible_verse))
 st.divider()
 st.write(st.session_state.devotional.devotional_text)
 st.divider()
