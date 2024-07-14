@@ -1,9 +1,6 @@
 import streamlit as st
 from PIL import Image
-from dotenv import load_dotenv
 import parrot_ai.bible_commentaries as btk
-
-load_dotenv()
 
 # Setting up the language
 if 'language' not in st.session_state:

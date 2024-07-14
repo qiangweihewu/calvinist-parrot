@@ -13,9 +13,6 @@ from parrot_ai.core.prompts import CCEL_CHAT_SYS_PROMPT
 
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 # Setting up the language
 if 'language' not in st.session_state:
     if st.session_state['logged_in'] == False:

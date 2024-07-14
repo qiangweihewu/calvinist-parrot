@@ -6,9 +6,6 @@ from parrot_ai.v2_brain import interactWithAgents, reset_status
 from parrot_ai.ccel_index import display_consulted_sources
 from PIL import Image
 
-from dotenv import load_dotenv
-load_dotenv()
-
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")
 

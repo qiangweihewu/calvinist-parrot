@@ -9,9 +9,6 @@ import google_connector as gc
 from sqlalchemy.orm import sessionmaker
 import jwt, uuid, os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 Base = declarative_base()

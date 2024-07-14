@@ -1,19 +1,11 @@
 import streamlit as st
-from dotenv import load_dotenv
 from serpapi import GoogleSearch
-import pythonbible as bible
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
 import pytz
 import os, requests
 from parrot_toolkit.sql_models import Devotionals
 from parrot_ai.core.prompts import DEVOTIONAL_SYS_PROMPT
-
-import pandas as pd
-
-bsb = pd.read_csv('app/bsb.tsv', sep='\t')
-
-load_dotenv()
 
 gpt_model = os.environ.get("GPT_MODEL")
 
@@ -169,28 +161,3 @@ def check_if_devotional_exists(devotional_id):
     session.close()
 
     return devotional
-
-def get_bsb_text(verse):
-    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
-
-def get_text(verse):
-    references = bible.get_references(verse)
-    text_out = ''
-
-    for i in references:
-        text_out += '\n'
-        verse_id = bible.convert_reference_to_verse_ids(i)
-        reference_out = bible.format_scripture_references([i])
-        for j in verse_id:
-            temp = bible.convert_verse_ids_to_references([j])
-            temp_ref = bible.format_scripture_references(temp)
-            try:
-                text_out += f'{get_bsb_text(temp_ref)}  \n'
-                version = 'BSB'
-            except:
-                text_out += f'{bible.get_verse_text(j)}  \n'
-                version = 'ASV'
-        text_out = text_out[:-1]
-        text_out += f' - {reference_out} ({version})  \n\n'
-
-    return text_out

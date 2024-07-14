@@ -65,7 +65,10 @@ nav_tools_jegama = [ccel_page, study_helper, sermon_review, bible_studies]
 if st.session_state['language'] in ['Español', 'Spanish']:
     nav_tools = nav_tools_esp
 else:
-    nav_tools = nav_tools_jegama if st.session_state['username'] == 'Jegama' else nav_tools_eng
+    if st.session_state['logged_in']:
+        nav_tools = nav_tools_jegama if st.session_state['username'] == 'Jegama' else nav_tools_eng
+    else:
+        nav_tools = [ccel_page, study_helper]
 
 
 if st.session_state['logged_in']:
@@ -80,7 +83,7 @@ else:
     pg = st.navigation(
         {
             "Main": [home, login_page, register_page],
-            "Tools": [ccel_page, study_helper],
+            "Tools": nav_tools,
             "Other": [devotionals]
         }
     )

@@ -1,12 +1,10 @@
 import streamlit as st
 from PIL import Image
-from dotenv import load_dotenv
 import parrot_toolkit.parrot_auth as auth
 from parrot_toolkit.sql_models import CCELConversationHistory
 from parrot_ai import chat_functions
 import parrot_ai.ccel_index as ccel
 
-load_dotenv()
 parrot_icon = Image.open("app/calvinist_parrot.ico")
 
 # Check if the user is logged in

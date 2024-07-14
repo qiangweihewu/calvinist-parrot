@@ -2,8 +2,6 @@ import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 import parrot_ai.study_generator as sg
 from PIL import Image
-from dotenv import load_dotenv
-load_dotenv()
 
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")

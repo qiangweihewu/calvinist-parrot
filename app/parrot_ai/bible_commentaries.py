@@ -1,17 +1,13 @@
 from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
 import pythonbible as bible
 from bs4 import BeautifulSoup
 import os, requests
-import pandas as pd
-
-bsb = pd.read_csv('app/bsb.tsv', sep='\t')
-
-load_dotenv()
+import parrot_toolkit.bibles_functions as bf
 
 gpt_model = os.environ.get("GPT_MODEL")
 
+import streamlit as st
 import google_connector as gc
 
 # create engine
@@ -45,9 +41,6 @@ def get_commentary_text(url):
     jump_div = maintable2.find('div', {'id': 'jump'})
     jump_div.extract()
     return maintable2.get_text()
-
-def get_bsb_text(verse):
-    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 def add_verse(references):
     # create session
@@ -102,10 +95,12 @@ def check_if_verse_exists(verse_id):
         return check_if_verse_exists(verse_id)
 
 def get_commentary_from_db(references):
-    bsb_text = ''
+    bible_text = ''
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
         reference_out = bible.format_scripture_references([i])
+        verse_text, version = bf.get_text_ui(reference_out)
+        bible_text += f'{verse_text}  \n'
         for j in verse_id:
             ref = bible.convert_verse_ids_to_references([j])
             temp_ref = bible.format_scripture_references(ref)
@@ -114,23 +109,18 @@ def get_commentary_from_db(references):
             file_name = f'temp/{temp_ref.replace(":", "_").replace(" ", "_")}.txt'
             with open(file_name, 'w', encoding="utf-8") as f:
                 f.write(text_)
-            try:
-                bsb_text += f'{get_bsb_text(temp_ref)}  \n'
-                version = 'BSB'
-            except:
-                bsb_text += f'{bible.get_verse_text(j)}  \n'
-                version = 'ASV'
-        bsb_text = bsb_text[:-1]
-        bsb_text += f' - {reference_out} ({version})  \n\n'
-    return bsb_text
+    return bible_text
+
 
 def check_input(input_):
+    if st.session_state['language'] not in ['Inglés', 'English']:
+        input_ = bf.translate_reference(input_)
     references = bible.get_references(input_)
     if len(references) == 0:
         return None
     else:
-        bsb_text = get_commentary_from_db(references)
-        return bsb_text
+        bible_text = get_commentary_from_db(references)
+        return bible_text
     
 
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader

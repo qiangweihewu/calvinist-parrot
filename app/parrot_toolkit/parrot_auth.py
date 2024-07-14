@@ -4,10 +4,6 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from parrot_toolkit.CookieManager import NEW_CM
 import parrot_toolkit.sql_models as sql
 import google_connector as gc
-from dotenv import load_dotenv
-load_dotenv()
-
-cookie_name = "parrot_cookie_token"
 
 # Cookie manager
 cookie_manager = NEW_CM()
