@@ -6,9 +6,6 @@ from parrot_ai.core.prompts import PARROT_SYS_PROMPT, CALVIN_SYS_PROMPT_CHAT
 from parrot_ai import chat_functions
 from parrot_ai import ccel_index as ccel
 
-from dotenv import load_dotenv
-load_dotenv()
-
 parrot = Image.open("app/calvinist_parrot.ico")
 calvin = Image.open("app/calvin.ico")
 

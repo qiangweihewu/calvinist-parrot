@@ -1,11 +1,8 @@
 import streamlit as st
 from parrot_toolkit.sql_models import SermonReview, SessionLocal
 from parrot_ai.core.prompts import SERMON_REVIEW_SYS_PROMPT, SERMON_REVIEW_CONTEXT
-from dotenv import load_dotenv
 import streamlit as st
 import os
-
-load_dotenv()
 
 gpt_model = os.environ.get("GPT_MODEL")
 

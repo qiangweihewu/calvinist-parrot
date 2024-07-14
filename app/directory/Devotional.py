@@ -1,11 +1,10 @@
 import streamlit as st
-from dotenv import load_dotenv
 import parrot_ai.devotional as dtk
+import parrot_toolkit.bibles_functions as bf
 from datetime import datetime as dt
+from babel.dates import format_date
 import pytz
 et = pytz.timezone('US/Eastern')
-
-load_dotenv()
 
 # Setting up the language
 now_ = dt.now(et)
@@ -41,20 +40,23 @@ if "page" not in st.session_state:
 if st.session_state["page"] != pages[2]:
     st.session_state["page"] = pages[2]
 
-st.header(f"Devotional for {now_.strftime('%A, %B %d, %Y')}")
+
+if st.session_state['language'] in ['Español', 'Spanish']:
+    st.header(f"Devocional para {format_date(now_, format='full', locale='es_ES')}")
+else:
+    st.header(f"Devotional for {format_date(now_, format='full', locale='en_US')}")
+
 st.subheader(st.session_state.devotional.title)
 if st.session_state['language'] in ['Español', 'Spanish']:
     temp = "Devocional Vespertino" if now_.hour >= 17 or now_.hour < 5 else "Devocional Matutino"
     st.write(temp)
 else:
     st.write(f"{devotional_type.capitalize()} devotional")
-if st.session_state['language'] in ['Español', 'Spanish']:
-    st.write(f"Versículo: {st.session_state.devotional.bible_verse}")
-else:
-    st.divider()
-    st.write(dtk.get_text(st.session_state.devotional.bible_verse))
 st.divider()
-st.write(st.session_state.devotional.devotional_text)
+text, _ = bf.get_text_ui(st.session_state.devotional.bible_verse)
+st.write(text)
+st.divider()
+st.write(st.session_state['devotional'].devotional_text)
 st.divider()
 st.write(DEVOTIONALS_FOOTER)
 with st.expander(DEVOTIONALS_EXPANDER):

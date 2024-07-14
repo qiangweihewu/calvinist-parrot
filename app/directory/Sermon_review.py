@@ -2,8 +2,6 @@ import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 import parrot_ai.sermon_eval as se
 from PIL import Image
-from dotenv import load_dotenv
-load_dotenv()
 
 im = Image.open("app/calvinist_parrot.ico")
 

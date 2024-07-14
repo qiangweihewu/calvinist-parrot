@@ -5,7 +5,7 @@ ccel/
 !.gitignore
 *.csv
 *.tsv
-!bsb.tsv
+!bibles.tsv
 *.xlsx
 *.ipynb
 raw_data/

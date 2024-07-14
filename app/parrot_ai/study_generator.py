@@ -1,10 +1,8 @@
 import streamlit as st
 from parrot_toolkit.sql_models import BibleStudies, SessionLocal
 from parrot_ai.core.prompts import STUDY_GEN_SYS_PROMPT, CALVIN_SYS_PROMPT
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 gpt_model = os.environ.get("GPT_MODEL")
 
 def save_study_to_db(user_id, title, bible_verse, topic, audience, bible_study_text):
@@ -38,38 +36,6 @@ def get_studies(user_id):
 
 from openai import OpenAI
 client = OpenAI()
-
-import pandas as pd
-import pythonbible as bible
-
-bsb = pd.read_csv('app/bsb.tsv', sep='\t')
-
-def get_bsb_text(verse):
-    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
-
-def get_text(verse):
-    references = bible.get_references(verse)
-    text_out = ''
-
-    for i in references:
-        text_out += '\n'
-        verse_id = bible.convert_reference_to_verse_ids(i)
-        reference_out = bible.format_scripture_references([i])
-        for j in verse_id:
-            temp = bible.convert_verse_ids_to_references([j])
-            temp_ref = bible.format_scripture_references(temp)
-            try:
-                text_out += f'{get_bsb_text(temp_ref)}  \n'
-                version = 'BSB'
-            except:
-                text_out += f'{bible.get_verse_text(j)}  \n'
-                version = 'ASV'
-        text_out = text_out[:-1]
-        text_out += f' - {reference_out} ({version})  \n\n'
-
-    return text_out, reference_out
-
-
 
 def generate_first_message(passage, reference, desired_topic, audience):
     message = f"""You are writing a Bible study for your congregation. Please write a 500-word Bible study on the topic of "{desired_topic}" for "{audience}". The passage you will be focusing on is:

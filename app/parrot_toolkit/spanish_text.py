@@ -15,8 +15,8 @@ Explora las herramientas disponibles en el menú de la izquierda:
 - **CCEL**: Sumérgete en los tesoros de la [Biblioteca Etérea de Clásicos Cristianos](https://ccel.org) para escritos cristianos atemporales.
 - **Asistente de Estudio**: Accede a comentarios de [Bible Hub](https://biblehub.com/commentaries) para enriquecer tu estudio de las Escrituras.
 - **Devocionales**: Comienza o termina tu día con reflexiones matutinas y vespertinas generadas por IA para consuelo e inspiración.
-- **Revisión de Sermones**: Evalúa tus sermones utilizando el marco de predicación centrada en Cristo de Bryan Chappell.\
 """
+# - **Revisión de Sermones**: Evalúa tus sermones utilizando el marco de predicación centrada en Cristo de Bryan Chappell.\
 
 HOME_FOOTER = """\
 - Actualización de febrero de 2024: Debido a la falta de fondos, estoy depreciando el "Chat Principal" ya que el costo de mantener el índice de CCEL es demasiado alto. Lo siento por las molestias. Mantendré disponibles las herramientas de "Asistente de Estudio" y "Devocionales". También estoy trabajando en una nueva herramienta para ayudarte a estudiar la Biblia. ¡Mantente atento!

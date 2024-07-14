@@ -11,9 +11,6 @@ from llama_index.core.llms import ChatMessage, MessageRole
 from parrot_ai import v2_brain
 import parrot_ai.ccel_index as ccel
 
-from dotenv import load_dotenv
-load_dotenv()
-
 # Setting up the language
 if 'language' not in st.session_state:
     if st.session_state['logged_in'] == False:
@@ -30,11 +27,7 @@ else:
 pool = gc.connect_with_connector('parrot_db')
 SessionLocal = sessionmaker(bind=pool)
 
-bsb = pd.read_csv('app/bsb.tsv', sep='\t')
 parrot_icon = Image.open("app/calvinist_parrot.ico")
-
-def get_bsb_text(verse):
-    return bsb.loc[bsb['Verse'] == verse, 'Berean Standard Bible'].values[0]
 
 gpt_model = os.environ.get("GPT_MODEL")
 
