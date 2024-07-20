@@ -90,7 +90,7 @@ Always return response as JSON."""
     ]
 
     response = client.chat.completions.create(
-        model=gpt_model,
+        model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=get_name_prompt,
         temperature = 0
