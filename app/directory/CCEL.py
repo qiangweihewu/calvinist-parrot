@@ -92,10 +92,11 @@ if prompt := st.chat_input(placeholder=CHAT_PLACESHOLDER):
             st.session_state['conversation_name'] = conversation_name
 
     # Save the conversation
-    chat_functions.create_or_update_conversation(
-        CCELConversationHistory, 
-        st.session_state['user_id'], 
-        st.session_state['conversation_name'],
-        st.session_state["ccel_messages"]
-    )
+    if st.session_state['logged_in']:
+        chat_functions.create_or_update_conversation(
+            CCELConversationHistory, 
+            st.session_state['user_id'], 
+            st.session_state['conversation_name'],
+            st.session_state["ccel_messages"]
+        )
     st.rerun()
