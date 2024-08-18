@@ -1,6 +1,7 @@
 import streamlit as st
 import parrot_toolkit.parrot_auth as auth
 import parrot_ai.study_generator as sg
+import parrot_toolkit.bibles_functions as bf
 from PIL import Image
 
 parrot = Image.open("app/calvinist_parrot.ico")
@@ -70,7 +71,7 @@ if st.session_state['logged_in']:
             reference = st.text_input("What will be the core passage?", key="reference")
             if reference:
                 try:
-                    passage, reference_db = sg.get_text(reference)
+                    passage, version, reference_db = bf.get_text_ui(reference)
                     st.write(passage)
                 except UnboundLocalError:
                     st.error("Invalid reference. Please try again.")

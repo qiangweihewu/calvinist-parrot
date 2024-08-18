@@ -99,7 +99,7 @@ def get_commentary_from_db(references):
     for i in references:
         verse_id = bible.convert_reference_to_verse_ids(i)
         reference_out = bible.format_scripture_references([i])
-        verse_text, version = bf.get_text_ui(reference_out)
+        verse_text, version, _ = bf.get_text_ui(reference_out)
         bible_text += f'{verse_text}  \n'
         for j in verse_id:
             ref = bible.convert_verse_ids_to_references([j])
