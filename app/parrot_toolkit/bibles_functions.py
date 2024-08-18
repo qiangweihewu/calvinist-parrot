@@ -93,4 +93,4 @@ def get_text_ui(verse):
             reference_out = f"{bible_book} {reference_out.split(' ')[-1]}"
         text_out += f' - {reference_out} ({version})'
 
-    return text_out, version
+    return text_out, version, reference_out

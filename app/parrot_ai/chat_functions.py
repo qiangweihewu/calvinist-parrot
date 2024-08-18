@@ -136,7 +136,7 @@ def get_conversation_history(conversation_table, user_id):
     try:
         conversations = db.query(conversation_table).filter(
             conversation_table.user_id == user_id
-        ).order_by(conversation_table.modified.desc()).all()
+        ).order_by(conversation_table.created.desc()).all()
     except Exception as e:
         st.error(f"{ERROR_GETTING_HISTORY}: {e}")
     finally:

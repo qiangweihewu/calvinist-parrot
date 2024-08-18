@@ -53,7 +53,7 @@ if st.session_state['language'] in ['Español', 'Spanish']:
 else:
     st.write(f"{devotional_type.capitalize()} devotional")
 st.divider()
-text, _ = bf.get_text_ui(st.session_state.devotional.bible_verse)
+text, _, _ = bf.get_text_ui(st.session_state.devotional.bible_verse)
 st.write(text)
 st.divider()
 st.write(st.session_state['devotional'].devotional_text)
