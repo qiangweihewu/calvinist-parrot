@@ -21,7 +21,8 @@ pages = [
     "Iniciar sesión",
     "Registrarse",
     "Cerrar sesión",
-    "Acerca De"
+    "Acerca De",
+    "Tablero"
 ]
 
 # Página Acerca De

@@ -59,7 +59,7 @@ service_context = ServiceContext.from_defaults(chunk_size_limit=1024)
 start = time.time()
 ccel_index = VectorStoreIndex([], service_context=service_context)
 no_text = []
-kg_docs = []
+# kg_docs = []
 
 print('\nLoading documents...')
 
@@ -72,7 +72,7 @@ for file in tqdm(list_of_files):
             doc.metadata['title'] = title
             doc.metadata['creators'] = creators
             ccel_index.insert(doc)
-            kg_docs.append(doc)
+            # kg_docs.append(doc)
     else:
         no_text.append(file)
 

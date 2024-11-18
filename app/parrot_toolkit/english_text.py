@@ -22,7 +22,8 @@ pages = [
     "Log in",
     "Register",
     "Log out",
-    "About"
+    "About",
+    "Dashboard"
 ]
 
 # About Page
