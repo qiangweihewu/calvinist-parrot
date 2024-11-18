@@ -89,6 +89,7 @@ devotionals = st.Page("directory/Devotional.py", title=pages[2], icon="📜")
 sermon_review = st.Page("directory/Sermon_review.py", title=pages[3], icon="👨‍🏫")
 bible_studies = st.Page("directory/Bible_studies.py", title=pages[4], icon="✒️")
 about_page = st.Page("directory/About.py", title=pages[8], icon=":material/info:")
+dashboard_page = st.Page("directory/Dashboard.py", title=pages[9], icon="📊")
 
 nav_tools_eng = [ccel_page, study_helper, sermon_review]
 nav_tools_esp = [ccel_page, study_helper]
@@ -115,7 +116,7 @@ if st.session_state['logged_in']:
 else:
     pg = st.navigation(
         {
-            "Main": [home, v2_parrot, login_page, register_page],
+            "Main": [home, dashboard_page, v2_parrot, login_page, register_page],
             "Tools": nav_tools,
             "Other": [devotionals, about_page]
         }
